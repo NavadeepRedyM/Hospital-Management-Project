@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Flight Booking System 2026</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <!-- LOGOUT SECTION -->
+    <div class="d-flex justify-content-end mb-3">
+        <form th:action="@{/home/logout}" method="post">
+            <button type="submit" class="btn btn-sm fw-bold shadow-sm" 
+                    style="background-color: #FF69B4 !important; color: white !important; border: none;">
+                Logout
+            </button>
+        </form>
+    </div>
+
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-header text-white" style="background-color: #FF69B4 !important;">
+            <h3 class="mb-0">Find Your Flight</h3>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/home/search}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Departure (Pick Up)</label>
+                    <input type="text" name="pickUp" class="form-control" placeholder="e.g. New York">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Destination</label>
+                    <input type="text" name="destination" class="form-control" placeholder="e.g. London">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Class</label>
+                    <select name="fclass" class="form-select">
+                        <option value="">All Classes</option>
+                        <option value="Economy">Economy</option>
+                        <option value="Business">Business</option>
+                        <option value="First">First Class</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn text-white w-100 fw-bold" 
+                            style="background-color: #FF69B4 !important;">
+                        Search Flights
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Flight Results Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Airline</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Date & Time</th>
+                        <th>Class</th>
+                        <th>Seats</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="f : ${flights}">
+                        <!-- DTO FIELD: airlineName (was entreprise) -->
+                        <td th:text="${f.airlineName}" class="fw-bold"></td>
+                        <td th:text="${f.pickUp}"></td>
+                        <td th:text="${f.destination}"></td>
+                        <td th:text="${#dates.format(f.departureDate, 'dd-MM-yyyy HH:mm')}"></td>
+                        
+                        <!-- DTO FIELD: flightClass (was fclass) -->
+                        <td>
+                            <span class="badge" style="background-color: #FFC0CB; color: #D81B60;" 
+                                  th:text="${f.flightClass}"></span>
+                        </td>
+                        
+                        <td th:text="${f.availableSeats}"></td>
+                        <td th:text="${'$' + f.price}" class="fw-bold text-success"></td>
+                        <td>
+                            <!-- DTO FIELD: fId -->
+                            <a th:href="@{/home/flights/book/{id}(id=${f.fId})}" 
+                               class="btn btn-sm text-white fw-bold"
+                               style="background-color: #FF69B4;"
+                               th:classappend="${f.availableSeats == 0} ? 'disabled' : ''">
+                               Book
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(flights)}">
+                        <td colspan="8" class="text-center text-muted py-4">No flights available for your search.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- FIXED BOOTSTRAP SCRIPT -->
+<script src="https://cdn.jsdelivr.net"></script>
+</body>
+</html>
