@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Dashboard</title>
+    
+    <style>
+        /* CSS styles remain the same for consistent hospital theme */
+        body { font-family: Arial, sans-serif; background-color: #eef2f7; margin: 0; padding: 0; display: flex; }
+        .sidebar { width: 250px; background-color: #2c3e50; color: white; height: 100vh; padding: 20px; box-sizing: border-box; }
+        .main-content { flex-grow: 1; padding: 20px; }
+        .header-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 5px; }
+        .sidebar h4 { color: #5dade2; margin-bottom: 15px; }
+        .nav-link { display: block; color: #a0aec0; padding: 10px 0; text-decoration: none; border-bottom: 1px solid #3d566e; }
+        .nav-link:hover { color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h4>Doctor Panel</h4>
+        <!-- Use th:href="@{/doctor/...}" for all doctor links -->
+        <a th:href="@{/doctor/profile}" class="nav-link">My Profile</a>
+        <a th:href="@{/doctor/today-appointments}" class="nav-link">Today's Appointments</a>
+        <a th:href="@{/doctor/records}" class="nav-link">Patient Medical Records</a>
+        <a th:href="@{/doctor/add-diagnosis}" class="nav-link">Add Diagnosis</a>
+        
+        <!-- Thymeleaf Form for Logout -->
+        <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
+            <button type="submit" style="background: none; border: none; color: #a0aec0; cursor: pointer; padding: 0; font: inherit; text-decoration: underline;">
+                Logout
+            </button>
+        </form>
+    </div>
+
+    <div class="main-content">
+        <div class="header-card">
+            <!-- Dynamically show the logged-in username -->
+           <h1 sec:authentication="name">Welcome, Doctor</h1>
+            <p>View appointments and update patient treatment plans.</p>
+        </div>
+        
+        <!-- Main Dashboard Content Goes Here (e.g., A list of appointments) -->
+        <div class="header-card">
+            <h2>Patient List Overview</h2>
+            <p>List of all patients assigned to you.</p>
+        </div>
+    </div>
+
+</body>
+</html>

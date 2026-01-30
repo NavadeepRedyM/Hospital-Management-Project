@@ -4,6 +4,8 @@ import com.cg.service.CustomUserDetailsService;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -26,10 +28,10 @@ public class SecurityConfig {
 	// Authentication provider
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-		auth.setUserDetailsService(userDetailsService);
-		auth.setPasswordEncoder(passwordEncoder());
-		return auth;
+	    DaoAuthenticationProvider auth = new DaoAuthenticationProvider(userDetailsService);
+	    // Use setUserDetailsService instead of setUserDetailsPasswordService
+	    auth.setPasswordEncoder(passwordEncoder());
+	    return auth;
 	}
 
 	// Security rules
