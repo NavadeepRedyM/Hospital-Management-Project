@@ -1,18 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Doctor Profile Details</title>
+    <style>
+        .profile-container { max-width: 600px; margin: 20px auto; }
+        .info-group { margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .label { color: #2c3e50; font-weight: bold; width: 200px; display: inline-block; }
+        .value { color: #555; }
+    </style>
 </head>
 <body>
-<h2>My Professional Profile</h2>
-<div class="header-card">
-    <p><strong>Name:</strong> <span th:text="${doctor.name}">Name</span></p>
-    <p><strong>Qualification:</strong> <span th:text="${doctor.qualification}">MD</span></p>
-    <p><strong>Department:</strong> <span th:text="${doctor.department.name}">Cardiology</span></p>
-    <p><strong>Experience:</strong> <span th:text="${doctor.yearsOfExperience}">5</span> Years</p>
-    <p><strong>Consultation Fee:</strong> $<span th:text="${doctor.consultationFee}">100.0</span></p>
-</div>
+
+    <div class="profile-container">
+        <h2>Professional Medical Profile</h2>
+        
+        <div class="header-card">
+            <div class="info-group">
+                <span class="label">Full Name:</span>
+                <span class="value" th:text="${doctor?.name}">Dr. John Doe</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">Qualifications:</span>
+                <span class="value" th:text="${doctor.qualification}">MD, MBBS</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">Medical Department:</span>
+                <span class="value" th:text="${doctor.department?.DeptName}">Cardiology</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">Years of Experience:</span>
+                <span class="value" th:text="${doctor.yearsOfExperience} + ' Years'">10 Years</span>
+            </div>
+
+            <div class="info-group">
+                <span class="label">Consultation Charges:</span>
+                <span class="value" th:text="'₹ ' + ${doctor.consultationFee}">₹ 500.0</span>
+            </div>
+        </div>
+        
+        <a th:href="@{/doctor/dashboard}" style="text-decoration:none; color:#5dade2;">← Return to Dashboard</a>
+    </div>
 
 </body>
 </html>

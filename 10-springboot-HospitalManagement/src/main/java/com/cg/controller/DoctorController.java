@@ -19,17 +19,21 @@ public class DoctorController {
 	    DoctorService doctorService;
 		
 		private Doctor getCurrentDoctor(UserDetails userDetails) {
-	        String loggedInName = userDetails.getUsername();
-	        System.out.println("Logging in as: " + loggedInName);
+	        String loggedInUserName = userDetails.getUsername();
+	        System.out.println("Logging in as: " + loggedInUserName);
+	        
 
-	        return doctorService.findDoctorByName(loggedInName);
+	        return doctorService.getDoctorByUsername(loggedInUserName); 
 	        
 	    }
 		
 
 		@GetMapping("/profile")
 	    public String viewProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+			Doctor doctor = getCurrentDoctor(userDetails);
+			System.out.println("Doctor Name from DB: " + (doctor != null ? doctor.getName() : "NULL"));
 	        model.addAttribute("doctor", getCurrentDoctor(userDetails));
+	        
 	        return "hospital/doctor-profile";
 	    }
 

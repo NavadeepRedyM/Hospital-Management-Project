@@ -34,11 +34,11 @@
     </div>
 
     <div class="main-content">
-        <div class="header-card">
-            <!-- Dynamically show the logged-in username -->
-           <h1 sec:authentication="name">Welcome, Doctor</h1>
-            <p>View appointments and update patient treatment plans.</p>
-        </div>
+       <div class="header-card">
+    <!-- This will now show "Welcome, Anaisha" if doctor.name is "Anaisha" -->
+    <h1>Welcome, <span th:text="${doctor.name}">Doctor</span></h1>
+    <p>View appointments and update patient treatment plans.</p>
+</div>
         
         <!-- Main Dashboard Content Goes Here (e.g., A list of appointments) -->
         <div class="header-card">

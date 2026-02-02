@@ -52,5 +52,9 @@ public class DoctorService implements IDoctorService {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public Doctor getDoctorByUsername(String loggedInUserName) {
+	         return doctorRepository.findDoctorByUserName(loggedInUserName);
+	}
 	}
 

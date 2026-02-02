@@ -15,6 +15,7 @@ public interface IDoctorService {
 	    List<Doctor> findDoctorsByQualification(String qualification);
 
 	    void deleteDoctor(Long id);
+	    public Doctor getDoctorByUsername(String loggedInUserName);
 	}
 
 

@@ -13,20 +13,26 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Doctor {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // +id: Long <<PK>>
-
     private String name; // name: String
     private String qualification; // qualification: String
     private int yearsOfExperience; // yearsOfExperience: int
     private double consultationFee; // consultationFee: double
+    
+    
+    
+    @OneToOne // Or @ManyToOne depending on your design
+    @JoinColumn(name = "user_name", referencedColumnName = "username")
+    private User user;
 
     // department_id: Long <<FK>>
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
@@ -37,9 +43,17 @@ public class Doctor {
     // medicalRecords: List<MedicalRecord> <<OneToMany>>
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MedicalRecord> medicalRecords;
+    
+    
+    
+    
+
+	public Doctor() {
+		super();
+	}
 
 	public Doctor(Long id, String name, String qualification, int yearsOfExperience, double consultationFee,
-			Department department, List<Appointment> appointments, List<MedicalRecord> medicalRecords) {
+			Department department, List<Appointment> appointments, List<MedicalRecord> medicalRecords,String userName) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -49,6 +63,7 @@ public class Doctor {
 		this.department = department;
 		this.appointments = appointments;
 		this.medicalRecords = medicalRecords;
+		this.user=user;
 	}
 
 	public Long getId() {
@@ -114,7 +129,15 @@ public class Doctor {
 	public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
 		this.medicalRecords = medicalRecords;
 	}
-    
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
     
     
 }
