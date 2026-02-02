@@ -28,17 +28,14 @@ public class Doctor {
     // department_id: Long <<FK>>
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
-    @JsonIgnore // Avoid infinite recursion in JSON serialization
     private Department department;
 
     // appointments: List<Appointment> <<OneToMany>>
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<Appointment> appointments;
 
     // medicalRecords: List<MedicalRecord> <<OneToMany>>
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<MedicalRecord> medicalRecords;
 
 	public Doctor(Long id, String name, String qualification, int yearsOfExperience, double consultationFee,

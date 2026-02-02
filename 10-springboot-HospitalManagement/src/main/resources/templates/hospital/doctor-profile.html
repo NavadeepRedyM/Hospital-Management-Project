@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h2>My Professional Profile</h2>
+<div class="header-card">
+    <p><strong>Name:</strong> <span th:text="${doctor.name}">Name</span></p>
+    <p><strong>Qualification:</strong> <span th:text="${doctor.qualification}">MD</span></p>
+    <p><strong>Department:</strong> <span th:text="${doctor.department.name}">Cardiology</span></p>
+    <p><strong>Experience:</strong> <span th:text="${doctor.yearsOfExperience}">5</span> Years</p>
+    <p><strong>Consultation Fee:</strong> $<span th:text="${doctor.consultationFee}">100.0</span></p>
+</div>
+
+</body>
+</html>
