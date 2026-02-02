@@ -24,7 +24,6 @@ public class UserService {
         if(!user.getRole().startsWith("ROLE_")) {
             user.setRole("ROLE_" + user.getRole().toUpperCase());
         }
-        
         userRepository.save(user);
     }
 }

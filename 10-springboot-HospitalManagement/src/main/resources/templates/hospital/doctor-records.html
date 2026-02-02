@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h2>Patient Medical History</h2>
+<div class="header-card" th:each="record : ${doctor.medicalRecords}">
+    <h4 th:text="'Patient: ' + ${record.patient.name}">Patient Name</h4>
+    <p><strong>Diagnosis:</strong> <span th:text="${record.diagnosis}">Diagnosis</span></p>
+    <p><strong>Treatment:</strong> <span th:text="${record.treatmentPlan}">Treatment</span></p>
+    <hr/>
+</div>
+</body>
+</html>

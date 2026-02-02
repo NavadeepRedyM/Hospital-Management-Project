@@ -14,30 +14,43 @@ public class DoctorService implements IDoctorService {
 
 	    
 
-	    @Autowired // Injects the DoctorRepository dependency via constructor
-	     DoctorRepository doctorRepository;
+  @Autowired
+    DoctorRepository doctorRepository;
 
+    public Doctor findDoctorByName(String name) {
+        return doctorRepository.findByName(name);
+    }
 
-	    public Doctor saveDoctor(Doctor doctor) {
-	        // Business logic can be added here before saving
-	        return doctorRepository.save(doctor);
-	    }
+    public List<Doctor> findByQualification(String qualification) {
+        return doctorRepository.findByQualification(qualification);
+    }
 
-	    public Optional<Doctor> findDoctorById(Long id) {
-	        return doctorRepository.findById(id);
-	    }
+    public List<Doctor> findAllDoctors() {
+        return doctorRepository.findAll();
+    }
 
-	    public List<Doctor> findAllDoctors() {
-	        return doctorRepository.findAll();
-	    }
+	@Override
+	public Doctor saveDoctor(Doctor doctor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	    public List<Doctor> findDoctorsByQualification(String qualification) {
-	        // This custom method must be defined in the DoctorRepository interface
-	        return doctorRepository.findByQualification(qualification);
-	    }
+	@Override
+	public Optional<Doctor> findDoctorById(Long id) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
 
-	    public void deleteDoctor(Long id) {
-	        doctorRepository.deleteById(id);
-	    }
+	@Override
+	public List<Doctor> findDoctorsByQualification(String qualification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteDoctor(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
 	}
 

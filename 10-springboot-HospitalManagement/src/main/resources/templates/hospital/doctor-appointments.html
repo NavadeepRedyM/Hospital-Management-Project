@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h2>Upcoming Appointments</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Patient Name</th>
+            <th>Date/Time</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="appt : ${doctor.appointments}">
+            <td th:text="${appt.patient.name}">Patient Name</td>
+            <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd-MM-yyyy HH:mm')}">Date</td>
+            <td th:text="${appt.status}">Confirmed</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
