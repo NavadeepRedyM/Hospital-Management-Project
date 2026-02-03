@@ -3,7 +3,7 @@ package com.cg.service;
 import java.util.List;
 import com.cg.model.Department;
 
-public interface DepartmentService{
+public interface IDepartmentService{
 	
 	Department addDepartment(Department department);
 	List<Department> getAllDepartments();

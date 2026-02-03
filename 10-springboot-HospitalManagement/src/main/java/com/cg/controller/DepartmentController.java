@@ -4,14 +4,14 @@ package com.cg.controller;
 	import org.springframework.beans.factory.annotation.Autowired;
 	import org.springframework.web.bind.annotation.*;
 	import com.cg.model.Department;
-	import com.cg.service.DepartmentService;
+	import com.cg.service.IDepartmentService;
 
 	@RestController
 	@RequestMapping("/api/departments")
 	public class DepartmentController {
 
 	    @Autowired
-	    private DepartmentService departmentService;
+	    private IDepartmentService departmentService;
 
 	    @PostMapping
 	    public Department addDepartment(@RequestBody Department department) {

@@ -9,7 +9,7 @@ import com.cg.model.Department;
 import com.cg.repository.DepartmentRepository;
 
 @Service
-public class DepartmentServiceImpl implements DepartmentService {
+public class DepartmentServiceImpl implements IDepartmentService {
 	
 	@Autowired
 	private DepartmentRepository departmentRepository;
