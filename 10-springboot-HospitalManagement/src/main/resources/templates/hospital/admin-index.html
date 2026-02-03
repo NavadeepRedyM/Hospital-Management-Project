@@ -1,0 +1,50 @@
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>Admin Dashboard</title>
+	    
+	    <style>
+	        /* CSS from previous response goes here for styling */
+	        body { font-family: Arial, sans-serif; background-color: #eef2f7; margin: 0; padding: 0; display: flex; }
+	        .sidebar { width: 250px; background-color: #2c3e50; color: white; height: 100vh; padding: 20px; box-sizing: border-box; }
+	        .main-content { flex-grow: 1; padding: 20px; }
+	        .header-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 5px; }
+	        .sidebar h4 { color: #5dade2; margin-bottom: 15px; }
+	        .nav-link { display: block; color: #a0aec0; padding: 10px 0; text-decoration: none; border-bottom: 1px solid #3d566e; }
+	        .nav-link:hover { color: white; }
+	    </style>
+	</head>
+	<body>
+	
+	    <div class="sidebar">
+	        <h4>Admin Panel</h4>
+	        <a href="#" class="nav-link">Manage Departments</a>
+	       <a th:href="@{/admin/manage-doctors}" class="nav-link">Manage Doctors</a>
+
+	        <a href="#" class="nav-link">View Patients</a>
+	        <a href="#" class="nav-link">View Appointments</a>
+	        <a href="#" class="nav-link">Billing Reports</a>
+	        
+	        <!-- Standard HTML Form for Spring Security Logout -->
+	        <form action="/logout" method="post" style="margin-top: 20px;">
+	            <button type="submit" style="background: none; border: none; color: #a0aec0; cursor: pointer; padding: 0; font: inherit; text-decoration: underline;">
+	                Logout
+	            </button>
+	        </form>
+	    </div>
+	
+	    <div class="main-content">
+	        <div class="header-card">
+	            <h1>Welcome, Admin</h1>
+	            <p>Control hospital operations from here.</p>
+	        </div>
+	        
+	        <div class="header-card">
+	            <h2>Current Operations Overview</h2>
+	            <p>Example: Quick summary of today's activities.</p>
+	        </div>
+	    </div>
+	
+	</body>
+	</html>

@@ -1,0 +1,125 @@
+package com.cg.model;
+
+import java.util.Date;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+
+@Entity
+
+	public class Appointment {
+	 
+	    @Id
+
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+	    private Long id;
+	 
+	    @ManyToOne
+
+	    @JoinColumn(name = "patient_id")
+
+	    private Patient patient; // Assuming a Patient entity exists
+	 
+	    @ManyToOne
+
+	    @JoinColumn(name = "doctor_id")
+
+	    private Doctor doctor; // Assuming a Doctor entity exists
+	 
+	    private Date appointmentDate;
+
+	    private String timeSlot;
+
+	    private String status;
+
+	    private String reasonForVisit;
+	 
+	    @OneToOne(mappedBy = "appointment")
+
+	    private Billing billing; // Assuming a Billing entity exists
+	 
+	    @OneToOne(mappedBy = "appointment")
+
+	    private MedicalRecord medicalRecord; // Assuming a MedicalRecord entity exists
+	 
+	    // Standard getters and setters
+
+	    public Long getId() { 
+
+	    	return id; }
+
+	    public void setId(Long id) { 
+
+	    	this.id = id; }
+
+	    public Patient getPatient() { 
+
+	    	return patient; }
+
+	    public void setPatient(Patient patient) { 
+
+	    	this.patient = patient; }
+
+	    public Doctor getDoctor() { 
+
+	    	return doctor; }
+
+	    public void setDoctor(Doctor doctor) { 
+
+	    	this.doctor = doctor; }
+
+	    public Date getAppointmentDate() { 
+
+	    	return appointmentDate; }
+
+	    public void setAppointmentDate(Date appointmentDate) {
+
+	    	this.appointmentDate = appointmentDate; }
+
+	    public String getTimeSlot() { 
+
+	    	return timeSlot; }
+
+	    public void setTimeSlot(String timeSlot) {
+
+	    	this.timeSlot = timeSlot; }
+
+	    public String getStatus() { 
+
+	    	return status; }
+
+	    public void setStatus(String status) { 
+
+	    	this.status = status; }
+
+	    public String getReasonForVisit() { 
+
+	    	return reasonForVisit; }
+
+	    public void setReasonForVisit(String reasonForVisit) {
+
+	    	this.reasonForVisit = reasonForVisit; }
+
+	    public Billing getBilling() { 
+
+	    	return billing; }
+
+	    public void setBilling(Billing billing) {
+
+	    	this.billing = billing; }
+
+	    public MedicalRecord getMedicalRecord() {
+
+	    	return medicalRecord; }
+
+	    public void setMedicalRecord(MedicalRecord medicalRecord) { this.medicalRecord = medicalRecord; }
+
+	}
+
+	 
