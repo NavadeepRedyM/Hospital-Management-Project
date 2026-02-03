@@ -6,7 +6,6 @@ import java.util.Optional;
 import com.cg.model.Doctor;
 
 public interface IDoctorService {
-	    Doctor saveDoctor(Doctor doctor);
 
 	    Optional<Doctor> findDoctorById(Long id);
 
