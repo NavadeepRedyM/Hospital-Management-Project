@@ -7,7 +7,7 @@ import com.cg.model.Doctor;
 
 public interface IDoctorService {
 
-	    Optional<Doctor> findDoctorById(Long id);
+	    Doctor findDoctorById(Long id);
 
 	    List<Doctor> findAllDoctors();
 

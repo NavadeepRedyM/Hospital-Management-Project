@@ -31,9 +31,10 @@ public class DoctorService implements IDoctorService {
 
 
 	@Override
-	public Optional<Doctor> findDoctorById(Long id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+	public Doctor findDoctorById(Long id) {
+		Doctor doctor= doctorRepository.findById(id).get();
+		return doctor;
+		
 	}
 
 	@Override

@@ -47,8 +47,8 @@ public class AdminController {
     // 3. EDIT DOCTOR - Show Form with existing data
     @GetMapping("/edit-doctor/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<Doctor> doctor = doctorService.findDoctorById(id);
-        model.addAttribute("doctor", doctor.get());
+        Doctor doctor = doctorService.findDoctorById(id);
+        model.addAttribute("doctor", doctor);
         return "hospital/edit-doctor";
     }
 

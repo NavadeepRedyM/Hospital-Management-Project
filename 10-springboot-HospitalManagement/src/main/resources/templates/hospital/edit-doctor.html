@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Doctor - Admin Panel</title>
+    <!-- Use the same CSS as your Add Doctor page for consistency -->
+</head>
+<body>
+
+<div class="container">
+    <h2>Edit Doctor Details</h2>
+    <form th:action="@{/admin/save-doctor}" th:object="${doctor}" method="post">
+        
+        <!-- CRITICAL: Hidden ID for Doctor Integrity -->
+        <input type="hidden" th:field="*{id}" />
+        
+        <!-- IMPORTANT: Keep the existing User and Department links -->
+        <!-- This prevents the "Column cannot be null" error on update -->
+        <input type="hidden" th:field="*{user.id}" /> 
+        <input type="hidden" th:field="*{user.username}" />
+        <input type="hidden" th:field="*{department.id}" />
+        <input type="hidden" th:field="*{user.password}" />
+<input type="hidden" th:field="*{user.role}" />
+        
+
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text" th:field="*{name}" required />
+        </div>
+        
+        <div class="form-group">
+            <label>Qualification:</label>
+            <input type="text" th:field="*{qualification}" />
+        </div>
+
+        <div class="form-group">
+            <label>Experience (Years):</label>
+            <input type="number" th:field="*{yearsOfExperience}" />
+        </div>
+
+        <div class="form-group">
+            <label>Consultation Fee:</label>
+            <input type="number" step="0.01" th:field="*{consultationFee}" />
+        </div>
+        
+        <button type="submit" class="btn btn-edit">Update Records</button>
+        <a th:href="@{/admin/manage-doctors}" class="back-link">Cancel</a>
+    </form>
+</div>
+
+</body>
+</html>
