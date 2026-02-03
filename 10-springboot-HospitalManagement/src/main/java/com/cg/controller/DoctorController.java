@@ -4,6 +4,8 @@ import com.cg.service.DoctorService;
 import com.cg.model.Doctor;
 import com.cg.model.MedicalRecord;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;

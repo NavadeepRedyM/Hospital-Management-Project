@@ -27,7 +27,7 @@ public class Doctor {
     
     
     
-    @OneToOne // Or @ManyToOne depending on your design
+    @OneToOne(cascade = CascadeType.ALL) // Or @ManyToOne depending on your design
     @JoinColumn(name = "user_name", referencedColumnName = "username")
     private User user;
 
@@ -53,7 +53,7 @@ public class Doctor {
 	}
 
 	public Doctor(Long id, String name, String qualification, int yearsOfExperience, double consultationFee,
-			Department department, List<Appointment> appointments, List<MedicalRecord> medicalRecords,String userName) {
+			Department department, List<Appointment> appointments, List<MedicalRecord> medicalRecords,User user) {
 		super();
 		this.id = id;
 		this.name = name;

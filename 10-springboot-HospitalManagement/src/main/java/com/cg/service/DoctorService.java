@@ -29,11 +29,6 @@ public class DoctorService implements IDoctorService {
         return doctorRepository.findAll();
     }
 
-	@Override
-	public Doctor saveDoctor(Doctor doctor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Optional<Doctor> findDoctorById(Long id) {
@@ -55,6 +50,17 @@ public class DoctorService implements IDoctorService {
 
 	public Doctor getDoctorByUsername(String loggedInUserName) {
 	         return doctorRepository.findDoctorByUserName(loggedInUserName);
+	}
+	
+	public List<Doctor> getAllDoctors(){
+		return doctorRepository.findAll();
+	}
+	public void deleteDoctorById(long id) {
+		doctorRepository.deleteById(id);
+	}
+	
+	public Doctor addDoctor(Doctor doctor) {
+		return doctorRepository.save(doctor);
 	}
 	}
 
