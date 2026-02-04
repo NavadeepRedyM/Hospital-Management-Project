@@ -16,6 +16,8 @@ import com.cg.model.Doctor;
 import com.cg.model.User;
 import com.cg.service.DoctorService;
 
+import jakarta.validation.Valid;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -39,7 +41,7 @@ public class AdminController {
 
     // 2. SAVE DOCTOR (Used for both Add and Update)
     @PostMapping("/save-doctor")
-    public String saveDoctor(@ModelAttribute("doctor") Doctor doctor) {
+    public String saveDoctor(@Valid @ModelAttribute("doctor") Doctor doctor) {
         doctorService.addDoctor(doctor); // Implementation should handle password encoding if new
         return "redirect:/admin/manage-doctors";
     }
