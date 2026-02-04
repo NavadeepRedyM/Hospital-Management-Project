@@ -3,12 +3,15 @@ package com.cg.model;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "department")
@@ -16,9 +19,26 @@ public class Department {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@NotBlank(message = "Department Name is Required")
+	@Pattern(
+			regexp = "[A-Za-z ]+$",
+			message = "Department Name must conatin only Letters")
+	@Column (nullable = false)
 	private String DeptName;
+	
+	@NotBlank(message = "HOD Name is Required")
+	@Pattern(
+			regexp = "[A-Za-z ]+$",
+			message = "HOD Name must conatin only Letters")
+	@Column (nullable = false)
 	private String HodName;
+	
+	@NotBlank(message = "Department Name is Required")
+	@Column (nullable = false)
 	private String Location;
+	
+	
 	private String Description;
 	
 	@OneToMany(mappedBy = "department",cascade = CascadeType.ALL)

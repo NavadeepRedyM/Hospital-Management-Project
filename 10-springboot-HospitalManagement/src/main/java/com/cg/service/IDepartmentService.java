@@ -1,14 +1,13 @@
 package com.cg.service;
 
 import java.util.List;
+
 import com.cg.model.Department;
 
-public interface IDepartmentService{
-	
-	Department addDepartment(Department department);
+public interface IDepartmentService {
+
 	List<Department> getAllDepartments();
 	Department getDepartmentById(Long id);
-	Department updateDepartment(Long id, Department department);
+	Department saveDepartment(Department department);
 	void deleteDepartment(Long id);
-
 }
