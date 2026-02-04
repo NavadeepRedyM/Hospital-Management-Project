@@ -14,28 +14,44 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Doctor {
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // +id: Long <<PK>>
-    private String name; // name: String
-    private String qualification; // qualification: String
-    private int yearsOfExperience; // yearsOfExperience: int
-    private double consultationFee; // consultationFee: double
-    
-    
-    
-    @OneToOne(cascade = CascadeType.ALL) // Or @ManyToOne depending on your design
+    private Long id;
+
+    @NotBlank(message = "Doctor name is required")
+    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
+    private String name;
+
+    @NotBlank(message = "Qualification is required")
+    private String qualification;
+
+    @Min(value = 0, message = "Experience cannot be negative")
+    @Max(value = 60, message = "Please enter a valid years of experience")
+    private int yearsOfExperience;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Fee cannot be negative")
+    @NotNull(message = "Consultation fee is required")
+    private double consultationFee;
+
+    @Valid // This ensures the User object inside Doctor is also validated
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_name", referencedColumnName = "username")
     private User user;
 
-    // department_id: Long <<FK>>
+    @NotNull(message = "Please select a department")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
-
     // appointments: List<Appointment> <<OneToMany>>
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments;
