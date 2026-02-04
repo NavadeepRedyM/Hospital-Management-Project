@@ -39,7 +39,7 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(csrf -> csrf.disable()).authenticationProvider(authenticationProvider())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/login", "/css/**").permitAll()
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/login","/register-user", "/css/**").permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/doctor/**").hasRole("DOCTOR")
 						.requestMatchers("/patient/**").hasRole("PATIENT").anyRequest().authenticated())
 				.formLogin(form -> form.loginPage("/login").loginProcessingUrl("/perform_login")
