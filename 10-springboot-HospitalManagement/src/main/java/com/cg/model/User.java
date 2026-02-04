@@ -14,7 +14,6 @@ public class User {
 	private Long id;
 
 	@NotBlank(message = "Username is required")
-    @Email(message = "Please provide a valid email address")
     private String username;
 
     @NotBlank(message = "Password cannot be empty")
