@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Book Appointment</title>
+  <link href="https://cdn.jsdelivr.net" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container my-4" style="max-width:720px;">
+  <h3 class="mb-3">Book Appointment</h3>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form th:action="@{/patient/book-appointment}" th:object="${form}" method="post">
+    
+          <input type="hidden" th:attr="name='patientId'" th:value="${patient.id}" />
+        <!-- Department Dropdown -->
+       <div class="mb-3">
+  <label class="form-label">Select Department</label>
+  <select class="form-select" th:field="*{departmentId}" required>
+    <option value="" selected disabled>-- Choose Department --</option>
+    <!-- Change dept.departmentName to dept.DeptName -->
+    <option th:each="dept : ${departments}" 
+            th:value="${dept.id}" 
+            th:text="${dept.DeptName}"></option>
+  </select>
+</div>
+
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Appointment Date</label>
+            <input type="date" class="form-control" th:field="*{date}" required/>
+          </div>
+        <div class="col-md-6 mb-3">
+    <label class="form-label">Preferred Hour</label>
+    <select class="form-select" th:field="*{time}" required>
+        <option value="" selected disabled>-- Select Hour --</option>
+        <option value="09:00">09:00 AM</option>
+        <option value="10:00">10:00 AM</option>
+        <option value="11:00">11:00 AM</option>
+        <option value="12:00">12:00 PM</option>
+        <option value="13:00">01:00 PM</option>
+        <option value="14:00">02:00 PM</option>
+        <option value="15:00">03:00 PM</option>
+        <option value="16:00">04:00 PM</option>
+        <option value="17:00">05:00 PM</option>
+    </select>
+</div>
+          <!-- Add this inside your <form> -->
+<div class="mb-3">
+    <label class="form-label">Reason for Visit</label>
+    <textarea class="form-control" th:field="*{reason}" rows="3" required></textarea>
+</div>
+
+          
+        </div>
+
+        <!-- Payment Method -->
+        <div class="mb-3">
+          <label class="form-label">Payment Method</label>
+          <select class="form-select" th:field="*{paymentMethod}" required>
+            <option value="CASH">Pay at Clinic</option>
+            <option value="UPI">UPI / QR Code</option>
+            <option value="CARD">Credit/Debit Card</option>
+          </select>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-primary" type="submit">Confirm & Proceed</button>
+          <a class="btn btn-outline-secondary" th:href="@{/patient/appointments}">Back</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
