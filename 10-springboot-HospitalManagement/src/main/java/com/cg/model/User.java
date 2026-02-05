@@ -1,6 +1,9 @@
 package com.cg.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -10,11 +13,12 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(unique = true)
-	private String username;
-     
-	@Column
-	private String password;
+	@NotBlank(message = "Username is required")
+    private String username;
+
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    private String password;
 
 	@Column
 	private String role; // ROLE_ADMIN, ROLE_DOCTOR, ROLE_PATIENT

@@ -16,6 +16,8 @@ import com.cg.model.Doctor;
 import com.cg.model.User;
 import com.cg.service.DoctorService;
 
+import jakarta.validation.Valid;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -38,17 +40,23 @@ public class AdminController {
     }
 
     // 2. SAVE DOCTOR (Used for both Add and Update)
-    @PostMapping("/save-doctor")
-    public String saveDoctor(@ModelAttribute("doctor") Doctor doctor) {
-        // Ensure the User object inside Doctor has the required role
-        if (doctor.getUser() != null) {
-            doctor.getUser().setRole("ROLE_DOCTOR");
-            // Optional: doctor.getUser().setEnabled(true);
-        }
-        
-        doctorService.addDoctor(doctor); 
-        return "redirect:/admin/manage-doctors";
+  @PostMapping("/save-doctor")
+public String saveDoctor(@Valid @ModelAttribute("doctor") DoctorDTO doctorDto, BindingResult result) {
+    // 1. Validation check (Catch errors early)
+    if (result.hasErrors()) {
+        return "hospital/add-doctor";
     }
+
+    // 2. Security Logic (From your 'Incoming' change)
+    if (doctorDto.getUser() != null) {
+        doctorDto.getUser().setRole("ROLE_DOCTOR");
+    }
+    
+    // 3. Save DTO (Matches your new Service layer)
+    doctorService.addDoctor(doctorDto); 
+    return "redirect:/admin/manage-doctors";
+}
+
 
 
     // 3. EDIT DOCTOR - Show Form with existing data
