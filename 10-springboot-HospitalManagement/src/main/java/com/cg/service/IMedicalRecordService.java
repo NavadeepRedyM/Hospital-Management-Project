@@ -1,10 +1,10 @@
 package com.cg.service;
 
 import java.util.List;
-
-import com.cg.model.MedicalRecord;
+import com.cg.dto.MedicalRecordDTO; // Import your DTO
 
 public interface IMedicalRecordService {
-	List<MedicalRecord>getMedicalRecordByPatientUsername(String username);
-
+    
+    // Returns List of DTOs instead of Entities
+    List<MedicalRecordDTO> getMedicalRecordByPatientUsername(String username);
 }

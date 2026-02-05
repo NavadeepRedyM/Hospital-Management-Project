@@ -1,27 +1,30 @@
 package com.cg.service;
 
 import java.util.List;
-
-import com.cg.model.MedicalRecord;
+import com.cg.dto.MedicalRecordDTO; // Import your DTO
 
 public interface IMedicalRecord {
-	 MedicalRecord createMedicalRecord(
-	           Long patientId,
-	           Long doctorId,
-	           Long appointmentId,
-	           String symptoms,
-	           String diagnosis,
-	           String treatmentPlan
-	   );
-	   MedicalRecord getMedicalRecordById(Long id);
-	   List<MedicalRecord> getMedicalRecordsByPatient(Long patientId);
-	   List<MedicalRecord> getMedicalRecordsByDoctor(Long doctorId);
-	   MedicalRecord updateMedicalRecord(
-	           Long id,
-	           String symptoms,
-	           String diagnosis,
-	           String treatmentPlan
-	   );
-	}
+    
+    // Returns DTO instead of Entity
+    MedicalRecordDTO createMedicalRecord(
+            Long patientId,
+            Long doctorId,
+            Long appointmentId,
+            String symptoms,
+            String diagnosis,
+            String treatmentPlan
+    );
 
+    MedicalRecordDTO getMedicalRecordById(Long id);
 
+    List<MedicalRecordDTO> getMedicalRecordsByPatient(Long patientId);
+
+    List<MedicalRecordDTO> getMedicalRecordsByDoctor(Long doctorId);
+
+    MedicalRecordDTO updateMedicalRecord(
+            Long id,
+            String symptoms,
+            String diagnosis,
+            String treatmentPlan
+    );
+}

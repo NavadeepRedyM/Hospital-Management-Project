@@ -1,80 +1,72 @@
 package com.cg.controller;
 
-
-
-
-
+import com.cg.dto.DepartmentDTO;
+import com.cg.service.IDepartmentService; // Use the interface
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.cg.model.Department;
-import com.cg.model.Doctor;
-import com.cg.repository.DepartmentRepository;
-import com.cg.repository.DoctorRepository;
-import com.cg.service.DepartmentService;
-
-import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/admin/departments")
 public class DepartmentController {
 
-	@Autowired
-	private DepartmentService departmentService;
-	
-	@Autowired
-	private DoctorRepository doctorRepository;
+    @Autowired
+    private IDepartmentService departmentService;
 
-	@GetMapping
-	public String viewDepartments(Model model) {
-		model.addAttribute("departments", departmentService.getAllDepartments());
-		return "hospital/manage-department";
+    @GetMapping
+    public String viewDepartments(Model model) {
+        // Service returns List<DepartmentDTO>
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        return "hospital/manage-department";
+    }
 
-	}
+    @GetMapping("/add")
+    public String showAddForm(Model model) {
+        // Initialize DTO for the form
+        model.addAttribute("department", new DepartmentDTO());
+        return "hospital/add-department";
+    }
 
-	@GetMapping("/add")
-	public String showAddForm(Model model) {
-		model.addAttribute("department", new Department());
-		return "hospital/add-department";
-	}
+    @PostMapping("/save")
+    public String saveDepartment(@Valid @ModelAttribute("department") DepartmentDTO departmentDto, BindingResult result) {
+        if (result.hasErrors()) {
+            // Returns to the form to show validation errors
+            return "hospital/add-department";
+        }
+        
+        if (departmentDto.getId() == null) {
+            // Match the service method name exactly
+            departmentService.addDepartment(departmentDto); 
+        } else {
+            departmentService.updateDepartment(departmentDto.getId(), departmentDto);
+        }
+        
+        return "redirect:/admin/departments";
+    }
 
-	@PostMapping("/save")
-	public String saveDepartment(@Valid @ModelAttribute("department")Department department,BindingResult result) {
-		if (result.hasErrors()) {
-			return "hospital/add-department";
-		}
-		departmentService.saveDepartment(department);
-		return "redirect:/admin/departments";
 
-	}
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        // Service returns DepartmentDTO
+        model.addAttribute("department", departmentService.getDepartmentById(id));
+        return "hospital/add-department";
+    }
 
-	@GetMapping("/edit/{id}")
-	public String showEditForm(@PathVariable Long id, Model model) {
-		model.addAttribute("department", departmentService.getDepartmentById(id));
-		return "hospital/add-department";
+    @GetMapping("/delete/{id}")
+    public String deleteDepartment(@PathVariable Long id) {
+        departmentService.deleteDepartment(id);
+        return "redirect:/admin/departments";
+    }
 
-	}
-
-	@GetMapping("/delete/{id}")
-	public String deleteDepartment(@PathVariable Long id) {
-		departmentService.deleteDepartment(id);
-		return "redirect:/admin/departments";
-
-	}
-	@GetMapping("/{id}/doctors")
-	public String viewDoctorsByDepartment(@PathVariable Long id, Model model) {
-	   Department department = departmentService.getDepartmentById(id);
-	   model.addAttribute("department", department);
-	   model.addAttribute("doctors",department.getDoctors());
-	   return "hospital/department-doctors";
-	}
-	
-
+    @GetMapping("/{id}/doctors")
+    public String viewDoctorsByDepartment(@PathVariable Long id, Model model) {
+       DepartmentDTO department = departmentService.getDepartmentById(id);
+       model.addAttribute("department", department);
+       // department.getDoctors() returns List<Doctor> as defined in your DepartmentDTO
+       model.addAttribute("doctors", department.getDoctors());
+       return "hospital/department-doctors";
+    }
 }
