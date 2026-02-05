@@ -79,8 +79,9 @@
     <td th:text="${a.id}"></td>
     <td th:text="${a.patient != null ? a.patient.id : 'N/A'}"></td>
     <td th:text="${a.doctor != null ? a.doctor.id : 'N/A'}"></td>
- 
-    <td th:text="${#dates.format(a.appointmentDate, 'dd-MM-yyyy')}"></td>
+ <!-- Use #temporals for LocalDate -->
+<td th:text="${a.appointmentDate != null ? #temporals.format(a.appointmentDate, 'dd-MM-yyyy') : 'N/A'}"></td>
+
     <td th:text="${a.timeSlot}"></td>
  
     <td th:classappend="

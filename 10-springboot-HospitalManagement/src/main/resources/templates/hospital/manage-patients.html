@@ -61,18 +61,16 @@
         <a th:href="@{/admin/patients/edit/{id}(id=${p.id})}" class="btn btn-edit">Edit</a>
 
         <!-- ✅ Delete (POST) with confirm dialog) -->
-        <form th:action="@{/admin/patients/delete/{id}(id=${p.id})}"
-              method="post"
-              style="display:inline;">
-          <!-- If/when you enable CSRF, un-comment the next line -->
-          <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
-
-          <button type="submit"
-                  class="btn btn-delete"
-                  >
-            Delete
-          </button>
-        </form>
+       <form th:action="@{/admin/patients/delete/{id}(id=${p.id})}" 
+      method="post" 
+      style="display:inline;"
+      >
+    
+    <!-- Security: Required if Spring Security CSRF is enabled -->
+    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    
+    <button type="submit" class="btn btn-delete">Delete</button>
+</form>
       </td>
     </tr>
 
