@@ -40,9 +40,16 @@ public class AdminController {
     // 2. SAVE DOCTOR (Used for both Add and Update)
     @PostMapping("/save-doctor")
     public String saveDoctor(@ModelAttribute("doctor") Doctor doctor) {
-        doctorService.addDoctor(doctor); // Implementation should handle password encoding if new
+        // Ensure the User object inside Doctor has the required role
+        if (doctor.getUser() != null) {
+            doctor.getUser().setRole("ROLE_DOCTOR");
+            // Optional: doctor.getUser().setEnabled(true);
+        }
+        
+        doctorService.addDoctor(doctor); 
         return "redirect:/admin/manage-doctors";
     }
+
 
     // 3. EDIT DOCTOR - Show Form with existing data
     @GetMapping("/edit-doctor/{id}")
