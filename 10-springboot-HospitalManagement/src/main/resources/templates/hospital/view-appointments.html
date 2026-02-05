@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Appointments List</title>
+ 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            padding: 30px;
+        }
+ 
+        h2 {
+            margin-bottom: 20px;
+        }
+ 
+        .back-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+ 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+ 
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+ 
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+ 
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+ 
+        .status-pending {
+            color: orange;
+            font-weight: bold;
+        }
+ 
+        .status-confirmed {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+ 
+<body>
+ 
+<a th:href="@{/admin/dashboard}" class="back-link">← Back to Admin</a>
+ 
+<h2>Appointments List</h2>
+ 
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Patient ID</th>
+            <th>Doctor ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+           
+        </tr>
+    </thead>
+ 
+    <tbody>
+<tr th:each="a : ${appointments}">
+    <td th:text="${a.id}"></td>
+    <td th:text="${a.patient != null ? a.patient.id : 'N/A'}"></td>
+    <td th:text="${a.doctor != null ? a.doctor.id : 'N/A'}"></td>
+ <!-- Use #temporals for LocalDate -->
+<td th:text="${a.appointmentDate != null ? #temporals.format(a.appointmentDate, 'dd-MM-yyyy') : 'N/A'}"></td>
+
+    <td th:text="${a.timeSlot}"></td>
+ 
+    <td th:classappend="
+        ${a.status == 'CONFIRMED'} ? 'status-confirmed' : 'status-pending'"
+        th:text="${a.status}">
+    </td>
+ 
+   
+</tr>
+</tbody>
+ 
+</table>
+ 
+</body>
+</html>
+
+ 

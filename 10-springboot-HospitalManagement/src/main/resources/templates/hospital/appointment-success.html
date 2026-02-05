@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Booking Confirmed</title>
+    <link href="https://cdn.jsdelivr.net" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container my-5 text-center" style="max-width: 600px;">
+    <div class="card shadow p-4">
+        <div class="mb-3">
+            <h2 class="text-success">✔ Appointment Booked!</h2>
+            <p class="text-muted">Your request has been submitted successfully.</p>
+        </div>
+        
+        <div class="card bg-light mb-4 text-start">
+            <div class="card-body">
+                <p><strong>Appointment ID:</strong> <span th:text="${appointment.id}">#</span></p>
+                <p><strong>Date:</strong> <span th:text="${appointment.appointmentDate}">-</span></p>
+                <p><strong>Time Slot:</strong> <span th:text="${appointment.timeSlot}">-</span></p>
+                <p><strong>Status:</strong> <span class="badge bg-warning text-dark" th:text="${appointment.status}">Pending</span></p>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <a th:href="@{/patient/appointments}" class="btn btn-primary">View My Appointments</a>
+            <a th:href="@{/patient/profile}" class="btn btn-outline-secondary">Go to Profile</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

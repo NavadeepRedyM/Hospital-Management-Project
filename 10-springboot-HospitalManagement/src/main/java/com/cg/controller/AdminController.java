@@ -40,11 +40,24 @@ public class AdminController {
     }
 
     // 2. SAVE DOCTOR (Used for both Add and Update)
-    @PostMapping("/save-doctor")
-    public String saveDoctor(@Valid @ModelAttribute("doctor") Doctor doctor) {
-        doctorService.addDoctor(doctor); // Implementation should handle password encoding if new
-        return "redirect:/admin/manage-doctors";
+  @PostMapping("/save-doctor")
+public String saveDoctor(@Valid @ModelAttribute("doctor") DoctorDTO doctorDto, BindingResult result) {
+    // 1. Validation check (Catch errors early)
+    if (result.hasErrors()) {
+        return "hospital/add-doctor";
     }
+
+    // 2. Security Logic (From your 'Incoming' change)
+    if (doctorDto.getUser() != null) {
+        doctorDto.getUser().setRole("ROLE_DOCTOR");
+    }
+    
+    // 3. Save DTO (Matches your new Service layer)
+    doctorService.addDoctor(doctorDto); 
+    return "redirect:/admin/manage-doctors";
+}
+
+
 
     // 3. EDIT DOCTOR - Show Form with existing data
     @GetMapping("/edit-doctor/{id}")

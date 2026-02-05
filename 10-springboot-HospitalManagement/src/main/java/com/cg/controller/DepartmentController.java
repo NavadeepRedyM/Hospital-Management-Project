@@ -1,44 +1,80 @@
 package com.cg.controller;
 
-	import java.util.List;
-	import org.springframework.beans.factory.annotation.Autowired;
-	import org.springframework.web.bind.annotation.*;
-	import com.cg.model.Department;
-	import com.cg.service.IDepartmentService;
 
-	@RestController
-	@RequestMapping("/api/departments")
-	public class DepartmentController {
 
-	    @Autowired
-	    private IDepartmentService departmentService;
 
-	    @PostMapping
-	    public Department addDepartment(@RequestBody Department department) {
-	        return departmentService.addDepartment(department);
-	    }
 
-	    @GetMapping
-	    public List<Department> getAllDepartments() {
-	        return departmentService.getAllDepartments();
-	    }
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-	    @GetMapping("/{id}")
-	    public Department getDepartmentById(@PathVariable Long id) {
-	        return departmentService.getDepartmentById(id);
-	    }
+import com.cg.model.Department;
+import com.cg.model.Doctor;
+import com.cg.repository.DepartmentRepository;
+import com.cg.repository.DoctorRepository;
+import com.cg.service.DepartmentService;
 
-	    @PutMapping("/{id}")
-	    public Department updateDepartment(@PathVariable Long id,
-	                                       @RequestBody Department department) {
-	        return departmentService.updateDepartment(id, department);
-	    }
+import jakarta.validation.Valid;
 
-	    @DeleteMapping("/{id}")
-	    public String deleteDepartment(@PathVariable Long id) {
-	        departmentService.deleteDepartment(id);
-	        return "Department deleted successfully";
-	    }
+@Controller
+@RequestMapping("/admin/departments")
+public class DepartmentController {
+
+	@Autowired
+	private DepartmentService departmentService;
+	
+	@Autowired
+	private DoctorRepository doctorRepository;
+
+	@GetMapping
+	public String viewDepartments(Model model) {
+		model.addAttribute("departments", departmentService.getAllDepartments());
+		return "hospital/manage-department";
+
 	}
 
+	@GetMapping("/add")
+	public String showAddForm(Model model) {
+		model.addAttribute("department", new Department());
+		return "hospital/add-department";
+	}
 
+	@PostMapping("/save")
+	public String saveDepartment(@Valid @ModelAttribute("department")Department department,BindingResult result) {
+		if (result.hasErrors()) {
+			return "hospital/add-department";
+		}
+		departmentService.saveDepartment(department);
+		return "redirect:/admin/departments";
+
+	}
+
+	@GetMapping("/edit/{id}")
+	public String showEditForm(@PathVariable Long id, Model model) {
+		model.addAttribute("department", departmentService.getDepartmentById(id));
+		return "hospital/add-department";
+
+	}
+
+	@GetMapping("/delete/{id}")
+	public String deleteDepartment(@PathVariable Long id) {
+		departmentService.deleteDepartment(id);
+		return "redirect:/admin/departments";
+
+	}
+	@GetMapping("/{id}/doctors")
+	public String viewDoctorsByDepartment(@PathVariable Long id, Model model) {
+	   Department department = departmentService.getDepartmentById(id);
+	   model.addAttribute("department", department);
+	   model.addAttribute("doctors",department.getDoctors());
+	   return "hospital/department-doctors";
+	}
+	
+
+}

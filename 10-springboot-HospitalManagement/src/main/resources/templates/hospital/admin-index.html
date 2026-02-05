@@ -19,11 +19,12 @@
 	
 	    <div class="sidebar">
 	        <h4>Admin Panel</h4>
-	        <a href="#" class="nav-link">Manage Departments</a>
+	        <a th:href="@{/admin/departments}" class="nav-link">Manage Departments</a>
 	       <a th:href="@{/admin/manage-doctors}" class="nav-link">Manage Doctors</a>
 
-	        <a href="#" class="nav-link">View Patients</a>
-	        <a href="#" class="nav-link">View Appointments</a>
+	       <a th:href="@{/admin/patients}" style="display:block;color:#a0aec0;padding:10px 0;text-decoration:none;border-bottom:1px solid #3d566e;">View Patients</a>
+	        <a th:href="@{/appointments}"
+			class="nav-link"> View Appointments </a>
 	        <a href="#" class="nav-link">Billing Reports</a>
 	        
 	        <!-- Standard HTML Form for Spring Security Logout -->
