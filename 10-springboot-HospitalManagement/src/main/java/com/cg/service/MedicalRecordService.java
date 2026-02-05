@@ -2,11 +2,12 @@ package com.cg.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cg.dto.MedicalRecordDTO;
 import com.cg.model.Appointment;
 import com.cg.model.Doctor;
 import com.cg.model.MedicalRecord;
@@ -32,67 +33,79 @@ public class MedicalRecordService implements IMedicalRecord {
     private AppointmentRepository appointmentRepository;
 
     @Override
-    public MedicalRecord createMedicalRecord(Long patientId, Long doctorId, Long appointmentId, 
+    public MedicalRecordDTO createMedicalRecord(Long patientId, Long doctorId, Long appointmentId, 
                                            String symptoms, String diagnosis, String treatmentPlan) {
         
-        Optional<Patient> patientOpt = patientRepository.findById(patientId);
-        Optional<Doctor> doctorOpt = doctorRepository.findById(doctorId);
-        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+        // Use .orElseThrow for cleaner "fail-fast" logic
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found: " + patientId));
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found: " + doctorId));
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found: " + appointmentId));
 
-        // Validating all required entities exist before using .get()
-        if (patientOpt.isPresent() && doctorOpt.isPresent() && appointmentOpt.isPresent()) {
-            
-            // Business Rule: Ensure one record per appointment
-            if (medicalRecordRepository.findByAppointmentId(appointmentId).isPresent()) {
-                throw new RuntimeException("Medical record already exists for this appointment");
-            }
-
-            MedicalRecord record = new MedicalRecord();
-            record.setPatient(patientOpt.get());
-            record.setDoctor(doctorOpt.get());
-            record.setAppointment(appointmentOpt.get());
-            record.setSymptoms(symptoms);
-            record.setDiagnosis(diagnosis);
-            record.setTreatmentPlan(treatmentPlan);
-            record.setRecordDate(LocalDate.now());
-            
-            return medicalRecordRepository.save(record);
-        } else {
-            throw new RuntimeException("Invalid Patient, Doctor, or Appointment ID provided");
+        if (medicalRecordRepository.findByAppointmentId(appointmentId).isPresent()) {
+            throw new RuntimeException("Medical record already exists for this appointment");
         }
-    }
 
-    @Override
-    public MedicalRecord getMedicalRecordById(Long id) {
-        Optional<MedicalRecord> recordOpt = medicalRecordRepository.findById(id);
-        if (recordOpt.isPresent()) {
-            return recordOpt.get();
-        }
-        throw new RuntimeException("Medical record not found for ID: " + id);
-    }
-
-    @Override
-    public List<MedicalRecord> getMedicalRecordsByPatient(Long patientId) {
-        // Returns a list; does not require .get() as it returns an empty list if none found
-        return medicalRecordRepository.findByPatientId(patientId);
-    }
-
-    @Override
-    public List<MedicalRecord> getMedicalRecordsByDoctor(Long doctorId) {
-        return medicalRecordRepository.findByDoctorId(doctorId);
-    }
-
-    @Override
-    public MedicalRecord updateMedicalRecord(Long id, String symptoms, String diagnosis, String treatmentPlan) {
-        Optional<MedicalRecord> recordOpt = medicalRecordRepository.findById(id);
+        MedicalRecord record = new MedicalRecord();
+        record.setPatient(patient);
+        record.setDoctor(doctor);
+        record.setAppointment(appointment);
+        record.setSymptoms(symptoms);
+        record.setDiagnosis(diagnosis);
+        record.setTreatmentPlan(treatmentPlan);
+        record.setRecordDate(LocalDate.now());
         
-        if (recordOpt.isPresent()) {
-            MedicalRecord record = recordOpt.get();
-            record.setSymptoms(symptoms);
-            record.setDiagnosis(diagnosis);
-            record.setTreatmentPlan(treatmentPlan);
-            return medicalRecordRepository.save(record);
-        }
-        throw new RuntimeException("Cannot update: Record not found for ID: " + id);
+        MedicalRecord savedRecord = medicalRecordRepository.save(record);
+        return convertToDTO(savedRecord);
+    }
+
+    @Override
+    public MedicalRecordDTO getMedicalRecordById(Long id) {
+        return medicalRecordRepository.findById(id)
+                .map(this::convertToDTO)
+                .orElseThrow(() -> new RuntimeException("Medical record not found for ID: " + id));
+    }
+
+    @Override
+    public List<MedicalRecordDTO> getMedicalRecordsByPatient(Long patientId) {
+        return medicalRecordRepository.findByPatientId(patientId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MedicalRecordDTO> getMedicalRecordsByDoctor(Long doctorId) {
+        return medicalRecordRepository.findByDoctorId(doctorId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public MedicalRecordDTO updateMedicalRecord(Long id, String symptoms, String diagnosis, String treatmentPlan) {
+        MedicalRecord record = medicalRecordRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cannot update: Record not found for ID: " + id));
+        
+        record.setSymptoms(symptoms);
+        record.setDiagnosis(diagnosis);
+        record.setTreatmentPlan(treatmentPlan);
+        
+        MedicalRecord updatedRecord = medicalRecordRepository.save(record);
+        return convertToDTO(updatedRecord);
+    }
+
+    // Helper: Entity -> DTO
+    private MedicalRecordDTO convertToDTO(MedicalRecord record) {
+        MedicalRecordDTO dto = new MedicalRecordDTO();
+        dto.setId(record.getId());
+        dto.setPatient(record.getPatient());
+        dto.setDoctor(record.getDoctor());
+        dto.setAppointment(record.getAppointment());
+        dto.setSymptoms(record.getSymptoms());
+        dto.setDiagnosis(record.getDiagnosis());
+        dto.setTreatmentPlan(record.getTreatmentPlan());
+        dto.setRecordDate(record.getRecordDate());
+        return dto;
     }
 }

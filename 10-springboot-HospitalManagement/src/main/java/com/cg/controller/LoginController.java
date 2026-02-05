@@ -16,31 +16,30 @@ import com.cg.service.DoctorService;
 
 @Controller
 public class LoginController {
-	@Autowired
-	DoctorService doctorservice;
-	
-	@GetMapping("/login")
-	public String showLoginPage() {
-	    return "hospital/login"; // Returns login.html
-	}
+    
+    @Autowired
+    private DoctorService doctorservice; // Ensure this is the IDoctorService interface
+    
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "hospital/login"; 
+    }
 
     @GetMapping("/redirect")
-    public String redirectAfterLogin(Authentication authentication,Model model) {
-        // Get the list of roles for the logged-in user
+    public String redirectAfterLogin(Authentication authentication, Model model) {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         String username = authentication.getName();
 
         if (roles.contains("ROLE_ADMIN")) {
-        	return "hospital/admin-index"; 
+            return "hospital/admin-index"; 
         } else if (roles.contains("ROLE_DOCTOR")) {
-        	Doctor doctor = doctorservice.getDoctorByUsername(username); 
+            // FIX: Change 'Doctor' entity to 'DoctorDTO'
+            com.cg.dto.DoctorDTO doctor = doctorservice.getDoctorByUsername(username); 
             model.addAttribute("doctor", doctor); 
             return "hospital/doctor-index";
-            // maps to doctor-index.html
         } else if (roles.contains("ROLE_PATIENT")) {
-            return "hospital/patient-index"; // maps to patient-index.html
+            return "hospital/patient-index"; 
         }
-        return "login";
+        return "redirect:/login?error";
     }
 }
-

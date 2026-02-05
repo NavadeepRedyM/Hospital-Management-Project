@@ -1,20 +1,25 @@
 package com.cg.service;
 
 import java.util.List;
-import java.util.Optional;
-
-import com.cg.model.Doctor;
+import com.cg.dto.DoctorDTO; // Import your DoctorDTO
 
 public interface IDoctorService {
 
-	    Doctor findDoctorById(Long id);
+    // Returns a DTO instead of an Entity
+    DoctorDTO findDoctorById(Long id);
 
-	    List<Doctor> findAllDoctors();
+    // Returns a List of DTOs
+    List<DoctorDTO> findAllDoctors();
 
-	    List<Doctor> findDoctorsByQualification(String qualification);
+    // Returns a List of DTOs
+    List<DoctorDTO> findDoctorsByQualification(String qualification);
 
-	    void deleteDoctor(Long id);
-	    public Doctor getDoctorByUsername(String loggedInUserName);
-	}
+    // Standard delete operation
+    void deleteDoctor(Long id);
 
-
+    // Returns a DTO based on username
+    DoctorDTO getDoctorByUsername(String loggedInUserName);
+    
+    // Adding the addDoctor method to match your service implementation
+    DoctorDTO addDoctor(DoctorDTO doctorDTO);
+}

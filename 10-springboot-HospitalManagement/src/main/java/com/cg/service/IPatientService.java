@@ -1,17 +1,25 @@
-// PatientService.java
 package com.cg.service;
 
 import java.util.List;
 import java.util.Optional;
-
-import com.cg.model.Patient;
+import com.cg.dto.PatientDTO; // Import your DTO
 
 public interface IPatientService {
-	List<Patient> findAll();
-    Patient findById(Long id);
-    void save(Patient patient);
-    void deleteById(Long id);
-    List<Patient> search(String query);
-    Optional<Patient> findByUsername(String username);
     
+    // Returns a List of DTOs
+    List<PatientDTO> findAll();
+
+    // Returns a single DTO
+    PatientDTO findById(Long id);
+
+    // Accepts a DTO for saving/updating
+    void save(PatientDTO patientDto);
+
+    void deleteById(Long id);
+
+    // Returns search results as DTOs
+    List<PatientDTO> search(String query);
+
+    // Returns an Optional containing a DTO
+    Optional<PatientDTO> findByUsername(String username);
 }
