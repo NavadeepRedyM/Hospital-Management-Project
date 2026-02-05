@@ -1,5 +1,6 @@
 package com.cg.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
@@ -32,7 +33,7 @@ import jakarta.persistence.OneToOne;
 
 	    private Doctor doctor; // Assuming a Doctor entity exists
 	 
-	    private Date appointmentDate;
+	    private LocalDate appointmentDate;
 
 	    private String timeSlot;
 
@@ -74,13 +75,13 @@ import jakarta.persistence.OneToOne;
 
 	    	this.doctor = doctor; }
 
-	    public Date getAppointmentDate() { 
+	    public LocalDate getAppointmentDate() { 
 
 	    	return appointmentDate; }
 
-	    public void setAppointmentDate(Date appointmentDate) {
+	    public void setAppointmentDate(LocalDate date) {
 
-	    	this.appointmentDate = appointmentDate; }
+	    	this.appointmentDate = date; }
 
 	    public String getTimeSlot() { 
 
