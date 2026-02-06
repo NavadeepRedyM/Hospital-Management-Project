@@ -2,6 +2,7 @@ package com.cg.service;
 
 import java.util.List;
 import com.cg.dto.DoctorDTO; // Import your DoctorDTO
+import com.cg.model.MedicalRecord;
 
 public interface IDoctorService {
 
@@ -22,4 +23,7 @@ public interface IDoctorService {
     
     // Adding the addDoctor method to match your service implementation
     DoctorDTO addDoctor(DoctorDTO doctorDTO);
+    
+    void addMedicalRecord(MedicalRecord medicalRecord);
+
 }

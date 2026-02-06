@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import com.cg.model.Patient;
 import com.cg.model.Doctor;
 import com.cg.model.Billing;
+import com.cg.model.Department;
 import com.cg.model.MedicalRecord;
 
 public class AppointmentDTO {
@@ -17,6 +18,10 @@ public class AppointmentDTO {
     private String reasonForVisit;
     private Billing billing;
     private MedicalRecord medicalRecord;
+    
+    private Department department; 
+ // Add getters and setters
+
 
     // Default Constructor
     public AppointmentDTO() {
@@ -64,4 +69,14 @@ public class AppointmentDTO {
 
     public MedicalRecord getMedicalRecord() { return medicalRecord; }
     public void setMedicalRecord(MedicalRecord medicalRecord) { this.medicalRecord = medicalRecord; }
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+    
+    
 }

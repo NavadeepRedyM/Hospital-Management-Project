@@ -43,6 +43,8 @@ public class Department {
 	
 	@OneToMany(mappedBy = "department",cascade = CascadeType.ALL)
   private List<Doctor>doctors;
+	
+	
 
 	public Department() {
 		super();

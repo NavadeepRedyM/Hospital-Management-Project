@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.cg.dto.DoctorDTO;
 import com.cg.model.Doctor;
+import com.cg.model.MedicalRecord;
 import com.cg.repository.DoctorRepository;
 
 @Service
@@ -14,6 +15,9 @@ public class DoctorService implements IDoctorService {
 
     @Autowired
     private DoctorRepository doctorRepository;
+    
+    @Autowired
+    private com.cg.repository.MedicalRecordRepository medicalRecordRepository;
     
     @Override
     public DoctorDTO findDoctorById(Long id) {
@@ -85,4 +89,17 @@ public class DoctorService implements IDoctorService {
         doctor.setMedicalRecords(dto.getMedicalRecords());
         return doctor;
     }
+    
+
+    @Override
+    public void addMedicalRecord(MedicalRecord medicalRecord) {
+        // Set current date if not provided
+        if (medicalRecord.getRecordDate() == null) {
+            medicalRecord.setRecordDate(java.time.LocalDate.now());
+        }
+        
+        // Save to database
+        medicalRecordRepository.save(medicalRecord);
+    }
+
 }

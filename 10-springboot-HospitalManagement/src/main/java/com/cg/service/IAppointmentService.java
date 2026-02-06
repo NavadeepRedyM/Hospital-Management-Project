@@ -10,4 +10,7 @@ public interface IAppointmentService {
     List<AppointmentDTO> getAllAppointments();
     AppointmentDTO getAppointmentById(Long id);
     void deleteAppointment(Long id);
+    
+    // ✅ Add this for Admin Allotment
+    void assignDoctorToAppointment(Long appointmentId, Long doctorId);
 }
