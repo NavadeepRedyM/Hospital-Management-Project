@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Assign Doctor</title>
+    <link href="https://cdn.jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-light p-5">
+    <div class="container card shadow p-4" style="max-width: 600px;">
+        <h3>Assign Doctor</h3>
+        <hr>
+        
+        <!-- Field names must match Java variables: appointment.patient.name -->
+        <p><strong>Patient:</strong> <span th:text="${appointment.patient?.name}">Patient Name</span></p>
+        <p><strong>Date:</strong> <span th:text="${appointment.appointmentDate}"></span></p>
+        <p><strong>Status:</strong> <span th:text="${appointment.status}"></span></p>
+
+        <form th:action="@{/appointments/save-assignment}" method="post">
+            <!-- This name must match @RequestParam in Controller -->
+            <input type="hidden" name="appointmentId" th:value="${appointment.id}" />
+            
+            <div class="mb-3">
+                <label class="form-label">Select Doctor (Filtered by Dept)</label>
+                <select name="doctorId" class="form-select" required>
+                    <option value="" selected disabled>-- Choose Doctor --</option>
+                    <option th:each="doc : ${doctors}" 
+                            th:value="${doc.id}" 
+                            th:text="${'Dr. ' + doc.name}"></option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Confirm Assignment</button>
+            <a th:href="@{/appointments}" class="btn btn-link w-100 mt-2">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>
