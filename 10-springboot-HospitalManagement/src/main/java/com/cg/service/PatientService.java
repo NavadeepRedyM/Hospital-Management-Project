@@ -34,9 +34,25 @@ public class PatientService implements IPatientService {
     }
 
     @Override
-    public void save(@Valid PatientDTO patientDto) { // Changed parameter to DTO
-        Patient patient = convertToEntity(patientDto);
-        patientRepository.save(patient); 
+    public void save(@Valid PatientDTO patientDto) {
+        // 1. Look for the existing record created during registration
+        Patient patient = patientRepository.findByUsername(patientDto.getUsername())
+                .orElseGet(() -> new Patient()); // Fallback to new if not found
+
+        // 2. Map DTO values to the existing entity
+        patient.setName(patientDto.getName());
+        patient.setAge(patientDto.getAge());
+        patient.setGender(patientDto.getGender());
+        patient.setContactNumber(patientDto.getContactNumber());
+        patient.setEmail(patientDto.getEmail());
+        patient.setAddress(patientDto.getAddress());
+        patient.setBloodGroup(patientDto.getBloodGroup());
+        
+        // Keep the username as it is the link
+        patient.setUsername(patientDto.getUsername());
+
+        // 3. Save (Updates the existing row in DB)
+        patientRepository.save(patient);
     }
 
     @Override
@@ -91,5 +107,8 @@ public class PatientService implements IPatientService {
         patient.setBloodGroup(dto.getBloodGroup());
         patient.setUsername(dto.getUsername());
         return patient;
+    }
+    public List<String> getIncompleteUsernames() {
+        return patientRepository.findIncompletePatientUsernames();
     }
 }

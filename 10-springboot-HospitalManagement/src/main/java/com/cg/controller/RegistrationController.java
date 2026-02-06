@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cg.dto.DoctorDTO;
 import com.cg.model.Doctor;
 import com.cg.model.User;
+import com.cg.repository.PatientRepository;
 import com.cg.service.DoctorService;
 import com.cg.service.UserService;
 
@@ -19,6 +20,9 @@ public class RegistrationController {
     
     @Autowired
     private DoctorService doctorService;
+    
+    @Autowired
+    private PatientRepository patientRepository;
 
     // 1. PATIENT REGISTRATION (Using User Entity)
     @GetMapping("/register-user")
@@ -29,11 +33,17 @@ public class RegistrationController {
 
     @PostMapping("/register-user")
     public String saveRegisteredUser(@ModelAttribute("user") User user) {
-        // Force role to PATIENT
         user.setRole("PATIENT"); 
-        
-        // UserService handles encryption and saving the Entity
         userService.saveUser(user); 
+        
+        // Create the placeholder patient
+        com.cg.model.Patient placeholder = new com.cg.model.Patient();
+        placeholder.setUsername(user.getUsername());
+        
+        // ✅ ADD THIS LINE: Set a temporary name to avoid the DB error
+        placeholder.setName("PENDING_DETAILS"); 
+        
+        patientRepository.save(placeholder);
         
         return "redirect:/login?success";
     }
