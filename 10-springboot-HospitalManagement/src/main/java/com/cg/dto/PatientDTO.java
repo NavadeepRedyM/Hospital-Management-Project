@@ -6,8 +6,6 @@ public class PatientDTO {
  
     private Long id;
  
-    @NotBlank(message = "Full Name is required")
-
     private String name;
  
     private String gender;

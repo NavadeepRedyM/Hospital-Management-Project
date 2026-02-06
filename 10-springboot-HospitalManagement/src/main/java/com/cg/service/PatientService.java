@@ -35,11 +35,20 @@ public class PatientService implements IPatientService {
 
     @Override
     public void save(@Valid PatientDTO patientDto) {
-        // 1. Look for the existing record created during registration
-        Patient patient = patientRepository.findByUsername(patientDto.getUsername())
-                .orElseGet(() -> new Patient()); // Fallback to new if not found
+        Patient patient;
 
-        // 2. Map DTO values to the existing entity
+        // 1. If ID exists, we are EDITING an existing complete record
+        if (patientDto.getId() != null) {
+            patient = patientRepository.findById(patientDto.getId())
+                    .orElseThrow(() -> new RuntimeException("Patient not found with id: " + patientDto.getId()));
+        } 
+        // 2. If ID is null, we are COMPLETING a placeholder record via the Add form
+        else {
+            patient = patientRepository.findByUsername(patientDto.getUsername())
+                    .orElseGet(() -> new Patient());
+        }
+
+        // 3. Map DTO values to the fetched Entity
         patient.setName(patientDto.getName());
         patient.setAge(patientDto.getAge());
         patient.setGender(patientDto.getGender());
@@ -48,12 +57,13 @@ public class PatientService implements IPatientService {
         patient.setAddress(patientDto.getAddress());
         patient.setBloodGroup(patientDto.getBloodGroup());
         
-        // Keep the username as it is the link
+        // Ensure the username remains consistent
         patient.setUsername(patientDto.getUsername());
 
-        // 3. Save (Updates the existing row in DB)
+        // 4. Save the managed entity
         patientRepository.save(patient);
     }
+
 
     @Override
     public void deleteById(Long id) {

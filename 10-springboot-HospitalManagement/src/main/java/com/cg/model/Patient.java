@@ -14,6 +14,7 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "full_name")
     private String name;
 
     @Column(name = "gender")
@@ -29,9 +30,7 @@ public class Patient {
     private String contactNumber;
 
     // ✅ Gmail only + valid email syntax
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@gmail\\.com$",
-             message = "Email must be a Gmail address (e.g., user@gmail.com)")
-    @Email(message = "Email format is invalid")
+    
     @Column(name = "email")
     private String email;
 
@@ -43,16 +42,15 @@ public class Patient {
     
     @Column(name="user_name")
     private String username;
-
-    // ---- keep your relations as they are (examples below) ----
-    // @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    // private List<Appointment> appointments = new ArrayList<>();
-    //
-    // @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    // private List<MedicalRecord> medicalRecords = new ArrayList<>();
-    //
-    // @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    // private List<Billing> bills = new ArrayList<>();
+    
+     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL,orphanRemoval = true)
+     private List<Appointment> appointments = new ArrayList<>();
+    
+     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL,orphanRemoval = true)
+     private List<MedicalRecord> medicalRecords = new ArrayList<>();
+    
+     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL,orphanRemoval = true)
+     private List<Billing> bills = new ArrayList<>();
 
     // ---------- Getters & Setters ----------
     public Long getId() { return id; }

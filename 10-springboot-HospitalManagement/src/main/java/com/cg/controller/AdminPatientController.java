@@ -51,7 +51,7 @@ public class AdminPatientController {
     }
 
     @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("patient") PatientDTO patientDto,
+    public String save( @Valid @ModelAttribute("patient") PatientDTO patientDto,
                        BindingResult result, Model model) {
 
         if (result.hasErrors()) {
