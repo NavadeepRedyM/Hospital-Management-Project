@@ -13,9 +13,14 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+<<<<<<< Updated upstream
 
     @NotBlank(message = "Full Name is required")
     @Column(name = "full_name", nullable = false)
+=======
+    
+    @Column(name = "full_name")
+>>>>>>> Stashed changes
     private String name;
 
     @Column(name = "gender")

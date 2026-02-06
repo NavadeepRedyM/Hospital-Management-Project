@@ -18,8 +18,8 @@ public interface IMedicalRecord {
     MedicalRecordDTO getMedicalRecordById(Long id);
 
     List<MedicalRecordDTO> getMedicalRecordsByPatient(Long patientId);
-
     List<MedicalRecordDTO> getMedicalRecordsByDoctor(Long doctorId);
+    List<MedicalRecordDTO> getMedicalRecordsByPatientUsername(String username);
 
     MedicalRecordDTO updateMedicalRecord(
             Long id,

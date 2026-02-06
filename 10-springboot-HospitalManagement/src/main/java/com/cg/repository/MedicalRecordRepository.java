@@ -13,6 +13,7 @@ import com.cg.model.MedicalRecord;
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Long>{
 	List<MedicalRecord>findByPatientId(Long patientId);
 	List<MedicalRecord>findByDoctorId(Long doctorId);
+	List<MedicalRecord>findByPatientUsername(String Username);
 	Optional<MedicalRecord>findByAppointmentId(Long appointmentId);
 	List<MedicalRecord>findByRecordDate(LocalDate recordDate);
 	

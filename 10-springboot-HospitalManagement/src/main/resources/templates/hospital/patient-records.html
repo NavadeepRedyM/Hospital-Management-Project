@@ -1,16 +1,27 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8" /><title>Medical Records</title></head>
-<body style="font-family: Arial; background:#eef2f7; padding:20px;">
-  <div style="background:#fff;padding:20px;border-radius:6px;max-width:1000px;margin:auto;">
-    <h2>Medical Records</h2>
-    <div th:each="rec : ${records}">
-      <p><strong>Date:</strong> <span th:text="${rec.recordDate}">2026-02-04</span></p>
-      <p><strong>Diagnosis:</strong> <span th:text="${rec.diagnosis}">Diagnosis</span></p>
-      <p><strong>Treatment:</strong> <span th:text="${rec.treatmentPlan}">Plan</span></p>
-      <hr/>
-    </div>
-    <p th:if="${#lists.isEmpty(records)}">No records yet.</p>
-  </div>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>My Medical Records</title>
+</head>
+<body>
+<h2>My Medical Records</h2>
+<div th:if="${records.isEmpty()}">
+<p>No medical records found.</p>
+</div>
+<div th:each="record : ${records}">
+<hr>
+<p><strong>Doctor:</strong>
+<span th:text="${record.doctor.name}"></span>
+</p>
+<p><strong>Symptoms:</strong>
+<span th:text="${record.symptoms}"></span>
+</p>
+<p><strong>Diagnosis:</strong>
+<span th:text="${record.diagnosis}"></span>
+</p>
+<p><strong>Treatment:</strong>
+<span th:text="${record.treatmentPlan}"></span>
+</p>
+</div>
 </body>
 </html>

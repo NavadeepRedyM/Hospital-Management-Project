@@ -108,4 +108,28 @@ public class MedicalRecordService implements IMedicalRecord {
         dto.setRecordDate(record.getRecordDate());
         return dto;
     }
+<<<<<<< Updated upstream
 }
+=======
+    
+    public List<MedicalRecord> searchByDoctorAndKeyword(Long doctorId, String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // If no keyword, you might want to return all for that doctor 
+            // or handle it in the controller
+            return medicalRecordRepository.findByDoctorId(doctorId); 
+        }
+        return medicalRecordRepository.searchByPatient(doctorId, keyword);
+    }
+
+	@Override
+	public List<MedicalRecordDTO> getMedicalRecordsByPatientUsername(String username) {
+		// TODO Auto-generated method stub
+		return medicalRecordRepository
+		           .findByPatientUsername(username)
+		           .stream()
+		           .map(this::convertToDTO)
+		           .toList();
+		}
+	}
+
+>>>>>>> Stashed changes
