@@ -2,6 +2,7 @@ package com.cg.repository;
 
 import com.cg.model.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     // This matches the findByUsername call in your service
     Optional<Patient> findByUsername(String username);
+    @Query("SELECT p.username FROM Patient p WHERE p.name IS NULL OR p.name = 'PENDING_DETAILS'")
+    List<String> findIncompletePatientUsernames();
 }

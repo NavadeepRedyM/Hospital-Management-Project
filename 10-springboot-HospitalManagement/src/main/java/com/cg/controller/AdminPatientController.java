@@ -2,7 +2,12 @@ package com.cg.controller;
 
 import com.cg.dto.PatientDTO; // Ensure this import is present
 import com.cg.service.PatientService;
+import com.cg.service.UserService;
+
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +20,9 @@ public class AdminPatientController {
 
     @Autowired	
     private PatientService patientService;
+    
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public String list(@RequestParam(value = "q", required = false) String q, Model model) {
@@ -25,13 +33,16 @@ public class AdminPatientController {
         model.addAttribute("q", q);
         return "hospital/manage-patients";
     }
-
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("patient", new PatientDTO());
+        
+        // Logic: Fetch only patients who have a record but no profile details yet
+        List<String> incomplete = patientService.getIncompleteUsernames();
+        model.addAttribute("usernames", incomplete);
+        
         return "hospital/add-patient";
     }
-
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model) {
         // Matches your service method: findById()
@@ -41,18 +52,19 @@ public class AdminPatientController {
 
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("patient") PatientDTO patientDto,
-                       BindingResult result) {
+                       BindingResult result, Model model) {
 
         if (result.hasErrors()) {
+            // ✅ Match the logic in addForm: use patientService to get incomplete records
+            model.addAttribute("usernames", patientService.getIncompleteUsernames());
+            
+            // If editing, the dropdown isn't usually needed, but this prevents crashes
             return (patientDto.getId() == null) ? "hospital/add-patient" : "hospital/edit-patient";
         }
 
-        // Using your service's unified save() method
         patientService.save(patientDto);
-        
         return "redirect:/admin/patients";
     }
-
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         // Matches your service method: deleteById()

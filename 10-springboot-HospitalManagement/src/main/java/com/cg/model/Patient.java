@@ -14,8 +14,6 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Full Name is required")
-    @Column(name = "full_name", nullable = false)
     private String name;
 
     @Column(name = "gender")
