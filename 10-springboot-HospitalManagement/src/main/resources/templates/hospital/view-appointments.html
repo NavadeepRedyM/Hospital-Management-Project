@@ -63,36 +63,38 @@
  
 <table>
     <thead>
-        <tr>
-            <th>ID</th>
-            <th>Patient ID</th>
-            <th>Doctor ID</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-           
-        </tr>
-    </thead>
- 
-    <tbody>
+       <!-- Inside the <thead> -->
+<tr>
+    <th>ID</th>
+    <th>Patient ID</th>
+    <th>Doctor Name</th> <!-- Updated for clarity -->
+    <th>Date</th>
+    <th>Time</th>
+    <th>Status</th>
+    <th>Actions</th> <!-- New Column -->
+</tr>
+
+<!-- Inside the <tbody> -->
 <tr th:each="a : ${appointments}">
     <td th:text="${a.id}"></td>
     <td th:text="${a.patient != null ? a.patient.id : 'N/A'}"></td>
-    <td th:text="${a.doctor != null ? a.doctor.id : 'N/A'}"></td>
- <!-- Use #temporals for LocalDate -->
-<td th:text="${a.appointmentDate != null ? #temporals.format(a.appointmentDate, 'dd-MM-yyyy') : 'N/A'}"></td>
-
+    <!-- Display Doctor Name instead of just ID -->
+    <td th:text="${a.doctor != null ? a.doctor.name : 'Unassigned'}"></td>
+    <td th:text="${a.appointmentDate != null ? #temporals.format(a.appointmentDate, 'dd-MM-yyyy') : 'N/A'}"></td>
     <td th:text="${a.timeSlot}"></td>
- 
-    <td th:classappend="
-        ${a.status == 'CONFIRMED'} ? 'status-confirmed' : 'status-pending'"
-        th:text="${a.status}">
+    <td th:classappend="${a.status == 'CONFIRMED'} ? 'status-confirmed' : 'status-pending'" th:text="${a.status}"></td>
+    
+    <td>
+        <!-- Button to trigger the Assign Doctor page -->
+        <a th:if="${a.doctor == null}" 
+           th:href="@{/appointments/assign/{id}(id=${a.id})}" 
+           style="background-color: #0077b6; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 13px;">
+           Assign
+        </a>
+        <span th:if="${a.doctor != null}" style="color: #27ae60; font-size: 13px;">✔ Assigned</span>
     </td>
- 
-   
 </tr>
-</tbody>
- 
+    </tbody>
 </table>
  
 </body>

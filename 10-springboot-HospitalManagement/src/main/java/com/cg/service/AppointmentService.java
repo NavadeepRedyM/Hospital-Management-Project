@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.cg.dto.AppointmentDTO;
 import com.cg.model.Appointment;
+import com.cg.model.Department;
 import com.cg.model.Doctor;
 import com.cg.model.Patient;
 import com.cg.repository.AppointmentRepository;
+import com.cg.repository.DepartmentRepository;
 import com.cg.repository.DoctorRepository;
 import com.cg.repository.PatientRepository;
 
@@ -26,6 +28,9 @@ public class AppointmentService implements IAppointmentService {
 
     @Autowired
     private DoctorRepository doctorRepository;
+    
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     @Override
     public List<AppointmentDTO> getAllAppointments() {
@@ -51,27 +56,29 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public AppointmentDTO book(String username, Long departmentId, Long doctorId, LocalDate date, String time, String reason) {
-        // 1. Fetch Patient Entity using username from Security
         Patient patient = patientRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Patient not found: " + username));
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
 
-        // 2. Fetch Doctor Entity using ID from the booking form
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found: " + doctorId));
-
-        // 3. Create Appointment Entity
         Appointment appointment = new Appointment();
         appointment.setPatient(patient);
-        appointment.setDoctor(doctor);
+        
+        // ✅ SAVE THE DEPARTMENT (Crucial for Admin filtering)
+        Department dept = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Department not found"));
+        appointment.setDepartment(dept); 
+
         appointment.setAppointmentDate(date);
         appointment.setTimeSlot(time);
         appointment.setReasonForVisit(reason);
-        appointment.setStatus("PENDING_PAYMENT");
+        
+        // doctorId will be null from your current form
+        appointment.setDoctor(null); 
+        appointment.setStatus("PENDING_ALLOTMENT");
 
-        // 4. Save and return as DTO
-        Appointment savedAppointment = appointmentRepository.save(appointment);
-        return convertToDTO(savedAppointment);
+        return convertToDTO(appointmentRepository.save(appointment));
     }
+
+
 
     @Override
     public List<AppointmentDTO> listForPatient(Long patientId) {
@@ -90,6 +97,7 @@ public class AppointmentService implements IAppointmentService {
         dto.setId(appointment.getId());
         dto.setPatient(appointment.getPatient());
         dto.setDoctor(appointment.getDoctor());
+        dto.setDepartment(appointment.getDepartment()); 
         dto.setAppointmentDate(appointment.getAppointmentDate());
         dto.setTimeSlot(appointment.getTimeSlot());
         dto.setStatus(appointment.getStatus());
@@ -98,4 +106,22 @@ public class AppointmentService implements IAppointmentService {
         dto.setMedicalRecord(appointment.getMedicalRecord());
         return dto;
     }
+    @Override
+    public void assignDoctorToAppointment(Long appointmentId, Long doctorId) {
+        // 1. Find the appointment
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found: " + appointmentId));
+
+        // 2. Find the doctor
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found: " + doctorId));
+
+        // 3. Perform Allotment
+        appointment.setDoctor(doctor);
+        appointment.setStatus("CONFIRMED");
+
+        // 4. Save
+        appointmentRepository.save(appointment);
+    }
+
 }

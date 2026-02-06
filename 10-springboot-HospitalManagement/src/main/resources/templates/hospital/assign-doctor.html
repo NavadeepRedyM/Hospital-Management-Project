@@ -9,22 +9,26 @@
         <h3>Assign Doctor</h3>
         <hr>
         
-        <!-- Field names must match Java variables: appointment.patient.name -->
         <p><strong>Patient:</strong> <span th:text="${appointment.patient?.name}">Patient Name</span></p>
+        
+        <!-- ✅ Display Selected Department Name -->
+        <p><strong>Department:</strong> <span th:text="${deptName}" class="badge bg-primary">Department Name</span></p>
+        
         <p><strong>Date:</strong> <span th:text="${appointment.appointmentDate}"></span></p>
-        <p><strong>Status:</strong> <span th:text="${appointment.status}"></span></p>
 
         <form th:action="@{/appointments/save-assignment}" method="post">
-            <!-- This name must match @RequestParam in Controller -->
             <input type="hidden" name="appointmentId" th:value="${appointment.id}" />
             
             <div class="mb-3">
-                <label class="form-label">Select Doctor (Filtered by Dept)</label>
+                <!-- ✅ Label updated to show filtered status -->
+                <label class="form-label">Select Doctor from <span th:text="${deptName}"></span></label>
+                
                 <select name="doctorId" class="form-select" required>
-                    <option value="" selected disabled>-- Choose Doctor --</option>
+                    <option value="" selected disabled>-- Choose a Doctor --</option>
+                    <!-- ✅ Loop through the filtered doctor list -->
                     <option th:each="doc : ${doctors}" 
                             th:value="${doc.id}" 
-                            th:text="${'Dr. ' + doc.name}"></option>
+                            th:text="${'Dr. ' + doc.name + ' (' + doc.qualification + ')'}"></option>
                 </select>
             </div>
 

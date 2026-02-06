@@ -32,6 +32,8 @@ public class MedicalRecordService implements IMedicalRecord {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    
+    
     @Override
     public MedicalRecordDTO createMedicalRecord(Long patientId, Long doctorId, Long appointmentId, 
                                            String symptoms, String diagnosis, String treatmentPlan) {
@@ -107,5 +109,14 @@ public class MedicalRecordService implements IMedicalRecord {
         dto.setTreatmentPlan(record.getTreatmentPlan());
         dto.setRecordDate(record.getRecordDate());
         return dto;
+    }
+    
+    public List<MedicalRecord> searchByDoctorAndKeyword(Long doctorId, String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // If no keyword, you might want to return all for that doctor 
+            // or handle it in the controller
+            return medicalRecordRepository.findByDoctorId(doctorId); 
+        }
+        return medicalRecordRepository.searchByPatient(doctorId, keyword);
     }
 }

@@ -50,6 +50,12 @@ import jakarta.persistence.OneToOne;
 	    private MedicalRecord medicalRecord; // Assuming a MedicalRecord entity exists
 	 
 	    // Standard getters and setters
+	    
+	    
+	    @ManyToOne
+	    @JoinColumn(name = "department_id")
+	    private Department department; // This stores the patient's choice
+
 
 	    public Long getId() { 
 
@@ -121,6 +127,15 @@ import jakarta.persistence.OneToOne;
 
 	    public void setMedicalRecord(MedicalRecord medicalRecord) { this.medicalRecord = medicalRecord; }
 
+		public Department getDepartment() {
+			return department;
+		}
+
+		public void setDepartment(Department department) {
+			this.department = department;
+		}
+
+	    
 	}
 
 	 
