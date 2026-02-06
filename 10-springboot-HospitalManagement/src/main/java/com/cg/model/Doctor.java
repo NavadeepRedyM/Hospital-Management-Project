@@ -53,11 +53,11 @@ public class Doctor {
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
     // appointments: List<Appointment> <<OneToMany>>
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
     // medicalRecords: List<MedicalRecord> <<OneToMany>>
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "doctor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<MedicalRecord> medicalRecords;
     
     

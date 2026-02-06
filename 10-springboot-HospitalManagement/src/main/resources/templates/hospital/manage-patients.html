@@ -34,51 +34,52 @@
 
     <a th:href="@{/admin/patients/add}" class="btn btn-add">Add New Patient</a>
   </div>
-
-  <table>
-    <thead>
+<table>
+  <thead>
     <tr>
       <th>ID</th>
       <th>Full Name</th>
+      <th>Age</th> <!-- Added -->
       <th>Gender</th>
       <th>Contact</th>
       <th>Email</th>
+      <th>Address</th> <!-- Added -->
       <th>Blood Group</th>
+      <th>Username</th> <!-- Added -->
       <th>Actions</th>
     </tr>
-    </thead>
-    <tbody>
+  </thead>
+  <tbody>
     <tr th:each="p : ${patients}">
       <td th:text="${p.id}">1</td>
-      <!-- CORRECT: Matches getName() in your Patient class -->
-<td th:text="${p.name}">John Doe</td>
-
-      <td th:text="${p.gender}">F</td>
-      <td th:text="${p.contactNumber}">99999</td>
-      <td th:text="${p.email}">john@demo.com</td>
+      <td th:text="${p.name}">John Doe</td>
+      <td th:text="${p.age}">30</td> <!-- Added Age -->
+      <td th:text="${p.gender}">Male</td>
+      <td th:text="${p.contactNumber}">9876543210</td>
+      <td th:text="${p.email}">john@gmail.com</td>
+      <td th:text="${p.address}">123 Main St</td> <!-- Added Address -->
       <td th:text="${p.bloodGroup}">O+</td>
+      <td th:text="${p.username}">john_user</td> <!-- Added Username -->
       <td>
-        <a th:href="@{/admin/patients/edit/{id}(id=${p.id})}" class="btn btn-edit">Edit</a>
+        <div style="display: flex; gap: 5px;">
+          <a th:href="@{/admin/patients/edit/{id}(id=${p.id})}" class="btn btn-edit">Edit</a>
 
-        <!-- ✅ Delete (POST) with confirm dialog) -->
-       <form th:action="@{/admin/patients/delete/{id}(id=${p.id})}" 
-      method="post" 
-      style="display:inline;"
-      >
-    
-    <!-- Security: Required if Spring Security CSRF is enabled -->
-    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-    
-    <button type="submit" class="btn btn-delete">Delete</button>
-</form>
+          <form th:action="@{/admin/patients/delete/{id}(id=${p.id})}" 
+                method="post" 
+                >
+            <!-- CSRF Token -->
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-delete">Delete</button>
+          </form>
+        </div>
       </td>
     </tr>
 
     <tr th:if="${#lists.isEmpty(patients)}">
-      <td colspan="7">No patients found.</td>
+      <td colspan="10" style="text-align: center;">No patients found.</td>
     </tr>
-    </tbody>
-  </table>
+  </tbody>
+</table>
 </div>
 
 </body>

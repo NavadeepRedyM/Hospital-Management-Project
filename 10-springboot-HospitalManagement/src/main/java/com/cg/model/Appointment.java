@@ -3,6 +3,7 @@ package com.cg.model;
 import java.time.LocalDate;
 import java.util.Date;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -45,8 +46,7 @@ import jakarta.persistence.OneToOne;
 
 	    private Billing billing; // Assuming a Billing entity exists
 	 
-	    @OneToOne(mappedBy = "appointment")
-
+	    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
 	    private MedicalRecord medicalRecord; // Assuming a MedicalRecord entity exists
 	 
 	    // Standard getters and setters
