@@ -1,71 +1,84 @@
 package com.cg.service;
- 
+
+import com.cg.dto.BillingDTO;
+import com.cg.model.Appointment;
 import com.cg.model.Billing;
+import com.cg.repository.AppointmentRepository;
 import com.cg.repository.BillingRepository;
- 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
- 
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.util.List;
- 
+import java.util.stream.Collectors;
+
 @Service
-public class BillingService implements IBillingServiceImpl {
- 
+public class BillingService {
+
     @Autowired
     private BillingRepository billingRepository;
- 
-    @Override
-    public Billing createBilling(Billing billing) {
-        return billingRepository.save(billing);
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Transactional
+    public BillingDTO createBilling(BillingDTO dto) {
+        Appointment app = appointmentRepository.findById(dto.getAppointmentId())
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        Billing billing = new Billing();
+        billing.setAppointment(app);
+        billing.setPatient(app.getPatient());
+        
+        // Fee from Department
+        double fee = app.getDepartment().getConsultationFee();
+        billing.setAmount(fee);
+        
+        // Automated 18% Tax Calculation
+        billing.setTax(fee * 0.18);
+        billing.setTotalAmount(fee + billing.getTax());
+        
+        billing.setPaymentStatus(dto.getPaymentStatus());
+        // Pulling payment method from the appointment's payment field if available
+        billing.setPaymentMethod(app.getPayment() != null ? app.getPayment().getPaymentMethod() : dto.getPaymentMethod());
+        billing.setBillingDate(LocalDate.now());
+
+        Billing saved = billingRepository.save(billing);
+        return convertToDTO(saved);
     }
- 
-    @Override
-    public List<Billing> getAllBillings() {
-        return billingRepository.findAll();
+
+    public List<BillingDTO> getAllBillings() {
+        return billingRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
- 
-    @Override
-    public Billing getBillingById(Long id) {
-        return billingRepository.findById(id).orElse(null);
+
+    // ✅ IMPLEMENTED THIS METHOD FOR ADMIN CONTROLLER
+    public List<BillingDTO> getBillsByPatientId(Long patientId) {
+        return billingRepository.findByPatientId(patientId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
- 
-    @Override
-    public List<Billing> getBillsByPatientId(Long patientId) {
-        return billingRepository.findByPatientId(patientId);
-    }
- 
-    @Override
-    public Billing getBillByAppointmentId(Long appointmentId) {
-        return billingRepository.findByAppointmentId(appointmentId);
-    }
- 
-    @Override
-    public List<Billing> getBillsByPaymentStatus(String status) {
-        return billingRepository.findByPaymentStatus(status);
-    }
- 
-    @Override
-    public Billing updateBilling(Long id, Billing billing) {
-        Billing existing = billingRepository.findById(id).orElse(null);
- 
-        if (existing != null) {
-            existing.setAmount(billing.getAmount());
-            existing.setTax(billing.getTax());
-            existing.setTotalAmount(billing.getTotalAmount());
-            existing.setPaymentStatus(billing.getPaymentStatus());
-            existing.setPaymentMethod(billing.getPaymentMethod());
-            existing.setBillingDate(billing.getBillingDate());
-            existing.setAppointment(billing.getAppointment());
-            existing.setPatient(billing.getPatient());
- 
-            return billingRepository.save(existing);
+
+    private BillingDTO convertToDTO(Billing b) {
+        BillingDTO dto = new BillingDTO();
+        dto.setId(b.getId());
+        dto.setAppointmentId(b.getAppointment().getId());
+        dto.setPatientId(b.getPatient().getId());
+        dto.setAmount(b.getAmount());
+        dto.setTax(b.getTax());
+        dto.setTotalAmount(b.getTotalAmount());
+        dto.setPaymentStatus(b.getPaymentStatus());
+        
+        // Accessing payment method from Appointment relationship as requested
+        if (b.getAppointment() != null && b.getAppointment().getPayment() != null) {
+            dto.setPaymentMethod(b.getAppointment().getPayment().getPaymentMethod());
+        } else {
+            dto.setPaymentMethod(b.getPaymentMethod());
         }
-        return null;
-    }
- 
-    @Override
-    public void deleteBilling(Long id) {
-        billingRepository.deleteById(id);
+        
+        dto.setBillingDate(b.getBillingDate());
+        return dto;
     }
 }
- 

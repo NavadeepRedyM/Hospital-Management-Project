@@ -18,7 +18,6 @@
 
 <div class="container">
     <h2>Add New Doctor</h2>
-    <!-- th:object="${doctor}" matches the model attribute name in AdminController -->
     <form th:action="@{/admin/save-doctor}" th:object="${doctor}" method="post">
         
         <label>Personal Details</label>
@@ -31,13 +30,12 @@
         <input type="number" th:field="*{yearsOfExperience}" placeholder="Years of Experience" />
         <span class="error-msg" th:if="${#fields.hasErrors('yearsOfExperience')}" th:errors="*{yearsOfExperience}"></span>
 
-        <input type="number" step="0.01" th:field="*{consultationFee}" placeholder="Consultation Fee" />
-        <span class="error-msg" th:if="${#fields.hasErrors('consultationFee')}" th:errors="*{consultationFee}"></span>
+        <!-- ✅ REMOVED: Consultation Fee input has been deleted -->
 
         <label>Hospital Mapping</label>
-        <!-- Binds to nested objects inside DoctorDTO -->
         <input type="number" th:field="*{department.id}" placeholder="Department ID" required />
         
+        <label>Security Credentials</label>
         <input type="text" th:field="*{user.username}" placeholder="Account Username" required />
         
         <button type="submit" class="btn-add">Register Doctor</button>

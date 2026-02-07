@@ -1,98 +1,89 @@
 package com.cg.controller;
- 
+
+import com.cg.dto.BillingDTO;
 import com.cg.model.Billing;
 import com.cg.repository.BillingRepository;
- 
+import com.cg.service.IBillingServiceImpl; // Preferred over direct Repo access
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
- 
+
 import java.util.List;
-import java.util.Optional;
- 
+import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/billings")
 public class BillingController {
- 
+
     @Autowired
     private BillingRepository billingRepository;
- 
-    //  Create Billing
+
+    // Create Billing
+    // Logic: In your service, ensure 'amount' is pulled from the Department fee
     @PostMapping
-    public Billing createBilling(@RequestBody Billing billing) {
-        return billingRepository.save(billing);
+    public ResponseEntity<Billing> createBilling(@RequestBody Billing billing) {
+        // Logic: 18% Tax Calculation
+        double amount = billing.getAmount();
+        double tax = amount * 0.18;
+        
+        billing.setTax(tax);
+        billing.setTotalAmount(amount + tax);
+        
+        return ResponseEntity.ok(billingRepository.save(billing));
     }
- 
+
+
     // Get All Billings
     @GetMapping
     public List<Billing> getAllBillings() {
         return billingRepository.findAll();
     }
- 
-    //  Get Billing By Id
+
+    // Get Billing By Id
     @GetMapping("/{id}")
     public ResponseEntity<Billing> getBillingById(@PathVariable Long id) {
- 
-        Optional<Billing> billing = billingRepository.findById(id);
- 
-        if (billing.isPresent()) {
-            return ResponseEntity.ok(billing.get());
-        }
-        return ResponseEntity.notFound().build();
+        return billingRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
- 
-    //  Get Bills By Patient Id
+
+    // Get Bills By Patient Id
     @GetMapping("/patient/{patientId}")
     public List<Billing> getBillsByPatientId(@PathVariable Long patientId) {
         return billingRepository.findByPatientId(patientId);
     }
- 
+
     // Get Bill By Appointment Id
     @GetMapping("/appointment/{appointmentId}")
-    public Billing getBillByAppointmentId(@PathVariable Long appointmentId) {
-        return billingRepository.findByAppointmentId(appointmentId);
+    public ResponseEntity<Billing> getBillByAppointmentId(@PathVariable Long appointmentId) {
+        Billing billing = billingRepository.findByAppointmentId(appointmentId);
+        return (billing != null) ? ResponseEntity.ok(billing) : ResponseEntity.notFound().build();
     }
- 
-    //  Get Bills By Payment Status
-    @GetMapping("/status/{status}")
-    public List<Billing> getBillsByPaymentStatus(@PathVariable String status) {
-        return billingRepository.findByPaymentStatus(status);
-    }
- 
-    //  Update Billing
+
+    // Update Billing
     @PutMapping("/{id}")
-    public ResponseEntity<Billing> updateBilling(
-            @PathVariable Long id,
-            @RequestBody Billing billingDetails) {
- 
-        Optional<Billing> optionalBilling = billingRepository.findById(id);
- 
-        if (optionalBilling.isPresent()) {
-            Billing billing = optionalBilling.get();
- 
-            billing.setAmount(billingDetails.getAmount());
-            billing.setTax(billingDetails.getTax());
-            billing.setTotalAmount(billingDetails.getTotalAmount());
-            billing.setPaymentStatus(billingDetails.getPaymentStatus());
-            billing.setPaymentMethod(billingDetails.getPaymentMethod());
-            billing.setBillingDate(billingDetails.getBillingDate());
-            billing.setAppointment(billingDetails.getAppointment());
-            billing.setPatient(billingDetails.getPatient());
- 
-            return ResponseEntity.ok(billingRepository.save(billing));
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Billing> updateBilling(@PathVariable Long id, @RequestBody Billing details) {
+        return billingRepository.findById(id)
+                .map(existing -> {
+                    existing.setAmount(details.getAmount());
+                    existing.setTax(details.getTax());
+                    existing.setTotalAmount(details.getTotalAmount());
+                    existing.setPaymentStatus(details.getPaymentStatus());
+                    existing.setPaymentMethod(details.getPaymentMethod());
+                    existing.setBillingDate(details.getBillingDate());
+                    return ResponseEntity.ok(billingRepository.save(existing));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
- 
-    //  Delete Billing
+
+    // Delete Billing
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBilling(@PathVariable Long id) {
- 
         if (billingRepository.existsById(id)) {
             billingRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
+    
 }
- 

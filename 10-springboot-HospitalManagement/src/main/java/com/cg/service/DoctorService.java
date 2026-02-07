@@ -10,6 +10,7 @@ import com.cg.dto.DoctorDTO;
 import com.cg.model.Doctor;
 import com.cg.model.MedicalRecord;
 import com.cg.repository.DoctorRepository;
+import com.cg.repository.MedicalRecordRepository;
 
 @Service
 public class DoctorService implements IDoctorService {
@@ -18,7 +19,7 @@ public class DoctorService implements IDoctorService {
     private DoctorRepository doctorRepository;
     
     @Autowired
-    private com.cg.repository.MedicalRecordRepository medicalRecordRepository;
+    private MedicalRecordRepository medicalRecordRepository;
     
     @Override
     public DoctorDTO findDoctorById(Long id) {
@@ -44,15 +45,13 @@ public class DoctorService implements IDoctorService {
             doctor = doctorRepository.findById(doctorDTO.getId())
                     .orElseThrow(() -> new RuntimeException("Doctor not found"));
             
-            // Update only personal info
             doctor.setName(doctorDTO.getName());
             doctor.setQualification(doctorDTO.getQualification());
             doctor.setYearsOfExperience(doctorDTO.getYearsOfExperience());
-            doctor.setConsultationFee(doctorDTO.getConsultationFee());
+            
+            // ✅ Consultation fee is now handled automatically via Department
             doctor.setDepartment(doctorDTO.getDepartment());
 
-            // FIX: Don't replace the User object. Only update username if needed.
-            // This preserves the existing password in the database.
             if (doctor.getUser() != null && doctorDTO.getUser() != null) {
                 doctor.getUser().setUsername(doctorDTO.getUser().getUsername());
             }
@@ -64,11 +63,9 @@ public class DoctorService implements IDoctorService {
             }
         }
 
-        // Keep appointments and medicalRecords untouched to avoid the previous SQL error
         Doctor savedDoctor = doctorRepository.save(doctor);
         return convertToDTO(savedDoctor);
     }
-
 
     // Helper: Entity -> DTO
     private DoctorDTO convertToDTO(Doctor doctor) {
@@ -77,28 +74,28 @@ public class DoctorService implements IDoctorService {
         dto.setName(doctor.getName());
         dto.setQualification(doctor.getQualification());
         dto.setYearsOfExperience(doctor.getYearsOfExperience());
-        dto.setConsultationFee(doctor.getConsultationFee());
-        dto.setUser(doctor.getUser());
-        dto.setDepartment(doctor.getDepartment());
         
-        // Only load these for viewing, not for saving back
+        // ✅ No setter needed: DTO's getConsultationFee() pulls from this department object
+        dto.setDepartment(doctor.getDepartment());
+        dto.setUser(doctor.getUser());
+        
         dto.setAppointments(doctor.getAppointments());
         dto.setMedicalRecords(doctor.getMedicalRecords());
         return dto;
     }
 
-    // Helper: DTO -> Entity (Simplified to avoid the error)
+    // Helper: DTO -> Entity
     private Doctor convertToEntity(DoctorDTO dto) {
         Doctor doctor = new Doctor();
         doctor.setId(dto.getId());
         doctor.setName(dto.getName());
         doctor.setQualification(dto.getQualification());
         doctor.setYearsOfExperience(dto.getYearsOfExperience());
-        doctor.setConsultationFee(dto.getConsultationFee());
-        doctor.setUser(dto.getUser());
-        doctor.setDepartment(dto.getDepartment());
         
-        // DO NOT map lists here as it causes the constraint violation
+        // ✅ Fee is not set here; it's inherited from this department
+        doctor.setDepartment(dto.getDepartment());
+        doctor.setUser(dto.getUser());
+        
         return doctor;
     }
 

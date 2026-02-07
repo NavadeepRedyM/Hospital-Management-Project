@@ -1,76 +1,108 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Book Appointment</title>
-  <link href="https://cdn.jsdelivr.net" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment | Hospital Management</title>
+    <!-- Using a reliable Bootstrap CDN link -->
+    <link href="https://cdn.jsdelivr.net" rel="stylesheet">
+    <!-- Font Awesome for better UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
+    <style>
+        body { background-color: #f4f7fb; }
+        .card { border: none; border-radius: 12px; }
+        .form-label { font-weight: 600; color: #444; }
+        .btn-primary { background-color: #0077b6; border: none; }
+        .btn-primary:hover { background-color: #023e8a; }
+        .dept-hint { font-size: 0.85rem; color: #6c757d; font-style: italic; }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container my-4" style="max-width:720px;">
-  <h3 class="mb-3">Book Appointment</h3>
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <form th:action="@{/patient/book-appointment}" th:object="${form}" method="post">
-    
-          <input type="hidden" th:attr="name='patientId'" th:value="${patient.id}" />
-        <!-- Department Dropdown -->
-       <div class="mb-3">
-  <label class="form-label">Select Department</label>
-  <select class="form-select" th:field="*{departmentId}" required>
-    <option value="" selected disabled>-- Choose Department --</option>
-    <!-- Change dept.departmentName to dept.DeptName -->
-    <option th:each="dept : ${departments}" 
-            th:value="${dept.id}" 
-            th:text="${dept.DeptName}"></option>
-  </select>
-</div>
+<body>
 
-
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Appointment Date</label>
-            <input type="date" class="form-control" th:field="*{date}" required/>
-          </div>
-        <div class="col-md-6 mb-3">
-    <label class="form-label">Preferred Hour</label>
-    <select class="form-select" th:field="*{time}" required>
-        <option value="" selected disabled>-- Select Hour --</option>
-        <option value="09:00">09:00 AM</option>
-        <option value="10:00">10:00 AM</option>
-        <option value="11:00">11:00 AM</option>
-        <option value="12:00">12:00 PM</option>
-        <option value="13:00">01:00 PM</option>
-        <option value="14:00">02:00 PM</option>
-        <option value="15:00">03:00 PM</option>
-        <option value="16:00">04:00 PM</option>
-        <option value="17:00">05:00 PM</option>
-    </select>
-</div>
-          <!-- Add this inside your <form> -->
-<div class="mb-3">
-    <label class="form-label">Reason for Visit</label>
-    <textarea class="form-control" th:field="*{reason}" rows="3" required></textarea>
-</div>
-
-          
-        </div>
-
-        <!-- Payment Method -->
-        <div class="mb-3">
-          <label class="form-label">Payment Method</label>
-          <select class="form-select" th:field="*{paymentMethod}" required>
-            <option value="CASH">Pay at Clinic</option>
-            <option value="UPI">UPI / QR Code</option>
-            <option value="CARD">Credit/Debit Card</option>
-          </select>
-        </div>
-
-        <div class="d-flex gap-2 mt-4">
-          <button class="btn btn-primary" type="submit">Confirm & Proceed</button>
-          <a class="btn btn-outline-secondary" th:href="@{/patient/appointments}">Back</a>
-        </div>
-      </form>
+<div class="container my-5" style="max-width: 720px;">
+    <div class="d-flex align-items-center mb-4">
+        <i class="fas fa-calendar-check fa-2x text-primary me-3"></i>
+        <h3 class="mb-0">Schedule New Appointment</h3>
     </div>
-  </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <!-- Ensure your Controller has a @ModelAttribute("form") -->
+            <form th:action="@{/patient/book-appointment}" th:object="${form}" method="post">
+                
+                <!-- Patient Context (passed from controller) -->
+                <input type="hidden" name="patientId" th:value="${patient.id}" />
+
+                <!-- 1. Department Selection (Fee is linked here) -->
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-hospital me-2"></i>Select Department</label>
+                    <select class="form-select" th:field="*{departmentId}" required id="deptSelect">
+                        <option value="" selected disabled>-- Choose Medical Department --</option>
+                        <option th:each="dept : ${departments}" 
+                                th:value="${dept.id}" 
+                                th:text="${dept.deptName}"></option>
+                    </select>
+                    <span class="dept-hint mt-2 d-block">* Note: Consultation fees vary by department.</span>
+                </div>
+
+                <!-- 2. Date and Time -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><i class="fas fa-calendar-day me-2"></i>Preferred Date</label>
+                        <!-- Setting min date to today using JS or static value -->
+                        <input type="date" class="form-control" th:field="*{date}" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><i class="fas fa-clock me-2"></i>Time Slot</label>
+                        <select class="form-select" th:field="*{time}" required>
+                            <option value="" selected disabled>-- Select Hour --</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 3. Medical Reason -->
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-stethoscope me-2"></i>Reason for Visit</label>
+                    <textarea class="form-control" th:field="*{reason}" rows="3" 
+                              required placeholder="Briefly describe your symptoms or reason for visit..."></textarea>
+                </div>
+
+                <!-- 4. Payment Preference (Pre-confirmation) -->
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-wallet me-2"></i>Payment Preference</label>
+                    <select class="form-select" name="paymentMethod" required>
+                        <option value="UPI">UPI / QR Code</option>
+                        <option value="CREDIT_CARD">Credit Card</option>
+                        <option value="DEBIT_CARD">Debit Card</option>
+                        <option value="CASH">Pay at Reception (Cash)</option>
+                    </select>
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+                    <button class="btn btn-primary px-4 py-2" type="submit">
+                        <i class="fas fa-check-circle me-1"></i> Confirm Booking
+                    </button>
+                    <a class="btn btn-outline-secondary px-4 py-2" th:href="@{/patient/appointments}">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<script>
+    // Optional: Prevent selecting past dates
+    document.addEventListener('DOMContentLoaded', function() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementsByName('date')[0].setAttribute('min', today);
+    });
+</script>
+
 </body>
 </html>

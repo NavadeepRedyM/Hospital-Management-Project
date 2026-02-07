@@ -36,11 +36,12 @@
                 <span class="value" th:text="${doctor.yearsOfExperience} + ' Years'">10 Years</span>
             </div>
 
-            <div class="info-group">
-                <span class="label">Consultation Charges:</span>
-                <span class="value" th:text="'₹ ' + ${doctor.consultationFee}">₹ 500.0</span>
-            </div>
-        </div>
+           <div class="info-group">
+    <span class="label">Consultation Charges:</span>
+    <!-- Added ? to make it safe if department is null -->
+    <span class="value" th:text="'₹ ' + ${doctor?.consultationFee}">₹ 0.0</span>
+</div>
+
         
         <a th:href="@{/doctor/dashboard}" style="text-decoration:none; color:#5dade2;">← Return to Dashboard</a>
     </div>

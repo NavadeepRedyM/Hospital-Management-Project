@@ -2,6 +2,7 @@ package com.cg.dto;
 
 import java.time.LocalDate;
 import com.cg.model.Patient;
+import com.cg.model.Payment;
 import com.cg.model.Doctor;
 import com.cg.model.Billing;
 import com.cg.model.Department;
@@ -18,10 +19,11 @@ public class AppointmentDTO {
     private String reasonForVisit;
     private Billing billing;
     private MedicalRecord medicalRecord;
-    
+    private Payment payment; 
     private Department department; 
- // Add getters and setters
-
+    
+    // ✅ ADDED THIS FIELD TO RESOLVE THE ERROR
+    private String paymentMethod; 
 
     // Default Constructor
     public AppointmentDTO() {
@@ -30,7 +32,7 @@ public class AppointmentDTO {
     // Parameterized Constructor
     public AppointmentDTO(Long id, Patient patient, Doctor doctor, LocalDate appointmentDate, 
                           String timeSlot, String status, String reasonForVisit, 
-                          Billing billing, MedicalRecord medicalRecord) {
+                          Billing billing, MedicalRecord medicalRecord, String paymentMethod) {
         this.id = id;
         this.patient = patient;
         this.doctor = doctor;
@@ -40,6 +42,7 @@ public class AppointmentDTO {
         this.reasonForVisit = reasonForVisit;
         this.billing = billing;
         this.medicalRecord = medicalRecord;
+        this.paymentMethod = paymentMethod;
     }
 
     // Getters and Setters
@@ -70,13 +73,13 @@ public class AppointmentDTO {
     public MedicalRecord getMedicalRecord() { return medicalRecord; }
     public void setMedicalRecord(MedicalRecord medicalRecord) { this.medicalRecord = medicalRecord; }
 
-	public Department getDepartment() {
-		return department;
-	}
+    public Department getDepartment() { return department; }
+    public void setDepartment(Department department) { this.department = department; }
+    
+    public Payment getPayment() { return payment; }
+    public void setPayment(Payment payment) { this.payment = payment; }
 
-	public void setDepartment(Department department) {
-		this.department = department;
-	}
-    
-    
+    // ✅ ADDED GETTER AND SETTER FOR paymentMethod
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
 }

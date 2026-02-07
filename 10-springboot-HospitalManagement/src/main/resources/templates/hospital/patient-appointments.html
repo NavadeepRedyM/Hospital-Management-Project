@@ -15,7 +15,7 @@
       <table class="table table-striped" th:if="${!#lists.isEmpty(appointments)}">
         <thead>
         <tr>
-          <th>#</th>
+          <th>S.no</th>
           <th>Date</th>
           <th>Time</th>
           <th>Department</th>
@@ -29,17 +29,25 @@
     <td th:text="${i.index + 1}">1</td>
     <td th:text="${a.appointmentDate}">-</td>
     <td th:text="${a.timeSlot}">-</td>
-    <!-- Accessing department name from the doctor object -->
-    <td th:text="${a.doctor != null && a.doctor.department != null ? a.doctor.department.DeptName : 'N/A'}">-</td>
-    <!-- Displaying the logged-in patient's name -->
-    <td th:text="${a.patient != null ? a.patient.name : 'N/A'}">-</td>
-    <!-- Displaying the reason for visit -->
-    <td th:text="${a.reasonForVisit}">-</td>
-    <!-- Displaying the current status (e.g., PENDING_PAYMENT) -->
+    
+    <!-- ✅ FIX: Access Department directly (always available) -->
+    <td th:text="${a.department != null ? a.department.deptName : 'N/A'}">-</td>
+    
+    <!-- Show Doctor Name only if assigned -->
+    <td th:text="${a.doctor != null ? 'Dr. ' + a.doctor.name : 'Awaiting Allotment'}">-</td>
+    
     <td>
         <span class="badge" 
               th:classappend="${a.status == 'CONFIRMED' ? 'bg-success' : 'bg-warning text-dark'}"
               th:text="${a.status}">Status</span>
+    </td>
+
+    <!-- ✅ ADDED: Action Column for Payment -->
+    <td>
+           
+        <span th:if="${a.status == 'PENDING_ALLOTMENT'}" class="text-muted small">
+            Processing...
+        </span>
     </td>
 </tr>
 

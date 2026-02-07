@@ -8,14 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cg.dto.AppointmentDTO;
+import com.cg.dto.PaymentDTO;
 import com.cg.model.Appointment;
+import com.cg.model.Billing;
 import com.cg.model.Department;
 import com.cg.model.Doctor;
 import com.cg.model.Patient;
+import com.cg.model.Payment;
 import com.cg.repository.AppointmentRepository;
+import com.cg.repository.BillingRepository;
 import com.cg.repository.DepartmentRepository;
 import com.cg.repository.DoctorRepository;
 import com.cg.repository.PatientRepository;
+import com.cg.repository.PaymentRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AppointmentService implements IAppointmentService {
@@ -31,6 +38,13 @@ public class AppointmentService implements IAppointmentService {
     
     @Autowired
     private DepartmentRepository departmentRepository;
+    
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
+    private BillingRepository billingRepository;
+
 
     @Override
     public List<AppointmentDTO> getAllAppointments() {
@@ -123,5 +137,42 @@ public class AppointmentService implements IAppointmentService {
         // 4. Save
         appointmentRepository.save(appointment);
     }
+    
+    @Override
+    @Transactional
+    public void finalizeBookingWithPayment(PaymentDTO paymentDto) {
+        // 1. Fetch the Appointment
+        Appointment appointment = appointmentRepository.findById(paymentDto.getAppointmentId())
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        // 2. Create and save the Payment record
+        Payment payment = new Payment();
+        payment.setAppointment(appointment);
+        payment.setPaymentMethod(paymentDto.getPaymentMethod());
+        payment.setAmount(paymentDto.getAmount());
+        payment.setStatus("COMPLETED");
+        payment.setPaymentDate(java.time.LocalDateTime.now());
+        paymentRepository.save(payment);
+
+        // 3. Update Appointment Status
+        // Since payment is successful, move from AWAITING_PAYMENT to CONFIRMED
+        appointment.setStatus("CONFIRMED");
+        appointmentRepository.save(appointment);
+
+        // 4. Automatically generate a Billing record (Financial history)
+        com.cg.model.Billing bill = new Billing();
+        bill.setAppointment(appointment);
+        bill.setPatient(appointment.getPatient());
+        bill.setAmount(paymentDto.getAmount());
+        bill.setTotalAmount(paymentDto.getAmount()); // Add tax logic here if needed
+        bill.setPaymentStatus("PAID");
+        bill.setPaymentMethod(paymentDto.getPaymentMethod());
+        bill.setBillingDate(java.time.LocalDate.now());
+        billingRepository.save(bill);
+    }
+    public List<Billing> getBillsByPatientId(Long patientId) {
+        return billingRepository.findByPatientId(patientId);
+    }
+
 
 }
