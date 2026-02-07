@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Billing Reports</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f7f6; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px;}
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #2c3e50; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .currency::before { content: "₹"; margin-right: 2px; }
+    </style>
+</head>
+<body>
+    <h2>Hospital Billing Records</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Bill ID</th>
+                <th>Patient ID</th>
+                <th>Base Amount</th>
+                <th>Tax (18%)</th>
+                <th>Total Payable</th>
+                <th>Payment Status</th>
+         
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 'b' is now a BillingDTO -->
+            <tr th:each="b : ${bills}">
+                <td th:text="${b.id}"></td>
+                
+                <!-- Direct access to patientId from DTO -->
+                <td th:text="${b.patientId}"></td>
+                
+                <td class="currency" th:text="${#numbers.formatDecimal(b.amount, 1, 2)}"></td>
+                <td class="currency" th:text="${#numbers.formatDecimal(b.tax, 1, 2)}"></td>
+                <td class="currency" th:text="${#numbers.formatDecimal(b.totalAmount, 1, 2)}" style="font-weight: bold;"></td>
+                
+                <td th:text="${b.paymentStatus}"></td>
+                
+                <!-- This will show the method pulled from the Appointment in your service -->
+            </tr>
+            <tr th:if="${#lists.isEmpty(bills)}">
+                <td colspan="7" style="text-align: center;">No billing records available.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

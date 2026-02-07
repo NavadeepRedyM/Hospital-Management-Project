@@ -48,6 +48,9 @@ import jakarta.persistence.OneToOne;
 	 
 	    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
 	    private MedicalRecord medicalRecord; // Assuming a MedicalRecord entity exists
+	    
+	    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
+	    private Payment payment;
 	 
 	    // Standard getters and setters
 	    
@@ -134,7 +137,8 @@ import jakarta.persistence.OneToOne;
 		public void setDepartment(Department department) {
 			this.department = department;
 		}
-
+		public Payment getPayment() { return payment; }
+		public void setPayment(Payment payment) { this.payment = payment; }
 	    
 	}
 

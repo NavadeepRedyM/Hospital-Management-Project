@@ -1,16 +1,67 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8" /><title>Medical Records</title></head>
-<body style="font-family: Arial; background:#eef2f7; padding:20px;">
-  <div style="background:#fff;padding:20px;border-radius:6px;max-width:1000px;margin:auto;">
-    <h2>Medical Records</h2>
-    <div th:each="rec : ${records}">
-      <p><strong>Date:</strong> <span th:text="${rec.recordDate}">2026-02-04</span></p>
-      <p><strong>Diagnosis:</strong> <span th:text="${rec.diagnosis}">Diagnosis</span></p>
-      <p><strong>Treatment:</strong> <span th:text="${rec.treatmentPlan}">Plan</span></p>
-      <hr/>
+<head>
+    <meta charset="UTF-8" />
+    <title>My Medical Records | Hospital Portal</title>
+    <!-- Bootstrap for clean layout -->
+    <link href="https://cdn.jsdelivr.net" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7fb; padding: 40px; }
+        .record-card { 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            border-left: 5px solid #0077b6;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .record-header { color: #0077b6; font-weight: bold; font-size: 1.1rem; }
+        .label { font-weight: 600; color: #444; width: 120px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="container" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-file-medical me-2"></i>My Medical History</h2>
+        <a th:href="@{/patient/dashboard}" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
     </div>
-    <p th:if="${#lists.isEmpty(records)}">No records yet.</p>
-  </div>
+
+    <!-- Loop through records -->
+    <div th:each="rec : ${records}" class="record-card">
+        <div class="d-flex justify-content-between mb-3">
+            <span class="record-header">
+                Diagnosis: <span th:text="${rec.diagnosis}">General Checkup</span>
+            </span>
+            <span class="text-muted">
+                <i class="far fa-calendar-alt"></i> 
+                <span th:text="${rec.recordDate != null ? #temporals.format(rec.recordDate, 'dd-MM-yyyy') : 'N/A'}">01-01-2026</span>
+            </span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p><span class="label">Doctor:</span> 
+                   <span th:text="${rec.doctor != null ? 'Dr. ' + rec.doctor.name : 'N/A'}"></span>
+                </p>
+                <p><span class="label">Symptoms:</span> 
+                   <span th:text="${rec.symptoms}">None</span>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p><span class="label">Treatment:</span> 
+                   <span th:text="${rec.treatmentPlan}">Rest</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(records)}" class="text-center py-5">
+        <div class="display-6 text-muted mb-3">📂</div>
+        <p class="text-muted">No medical records found in your profile.</p>
+    </div>
+</div>
+
 </body>
 </html>

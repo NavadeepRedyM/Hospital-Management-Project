@@ -1,11 +1,4 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
-<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -18,36 +11,40 @@
     <h2>Edit Doctor Details</h2>
     <form th:action="@{/admin/save-doctor}" th:object="${doctor}" method="post">
         
-        <!-- CRITICAL: Hidden ID for Doctor Integrity -->
+        <!-- CRITICAL: Hidden fields to maintain data integrity -->
         <input type="hidden" th:field="*{id}" />
-        
-        <!-- IMPORTANT: Keep the existing User and Department links -->
-        <!-- This prevents the "Column cannot be null" error on update -->
         <input type="hidden" th:field="*{user.id}" /> 
         <input type="hidden" th:field="*{user.username}" />
-        <input type="hidden" th:field="*{department.id}" />
         <input type="hidden" th:field="*{user.password}" />
-<input type="hidden" th:field="*{user.role}" />
+        <input type="hidden" th:field="*{user.role}" />
         
+        <!-- IMPORTANT: The Department ID must be kept to keep the fee link -->
+        <input type="hidden" th:field="*{department.id}" />
 
         <div class="form-group">
             <label>Name:</label>
             <input type="text" th:field="*{name}" required />
+            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
         </div>
         
         <div class="form-group">
             <label>Qualification:</label>
             <input type="text" th:field="*{qualification}" />
+            <span th:if="${#fields.hasErrors('qualification')}" th:errors="*{qualification}"></span>
         </div>
 
         <div class="form-group">
             <label>Experience (Years):</label>
             <input type="number" th:field="*{yearsOfExperience}" />
+            <span th:if="${#fields.hasErrors('yearsOfExperience')}" th:errors="*{yearsOfExperience}"></span>
         </div>
 
+        <!-- ✅ REMOVED: Consultation Fee input is deleted -->
         <div class="form-group">
-            <label>Consultation Fee:</label>
-            <input type="number" step="0.01" th:field="*{consultationFee}" />
+            <label>Current Dept. Fee:</label>
+            <!-- Displaying it as read-only text so the Admin knows the price -->
+            <input type="text" th:value="${doctor.consultationFee}" disabled />
+            <small style="color: #7f8c8d;">To change this fee, update the Department settings.</small>
         </div>
         
         <button type="submit" class="btn btn-edit">Update Records</button>

@@ -1,103 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Appointments List</title>
- 
+    <meta charset="UTF-8">
+    <title>Appointments Management | Admin</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            padding: 30px;
-        }
- 
-        h2 {
-            margin-bottom: 20px;
-        }
- 
-        .back-link {
-            display: inline-block;
-            margin-bottom: 15px;
-            text-decoration: none;
-            color: #2c3e50;
-            font-weight: bold;
-        }
- 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
- 
-        th, td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
- 
-        th {
-            background-color: #2c3e50;
-            color: white;
-        }
- 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
- 
-        .status-pending {
-            color: orange;
-            font-weight: bold;
-        }
- 
-        .status-confirmed {
-            color: green;
-            font-weight: bold;
-        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f8; padding: 30px; }
+        h2 { color: #2c3e50; margin-bottom: 20px; border-left: 5px solid #0077b6; padding-left: 15px; }
+        .back-link { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #2c3e50; font-weight: bold; }
+        .back-link:hover { color: #0077b6; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 4px 8px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 14px; text-align: center; border: 1px solid #eee; }
+        th { background-color: #2c3e50; color: white; font-size: 14px; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f4f9; }
+        .status-pending { color: #f39c12; font-weight: bold; }
+        .status-confirmed { color: #27ae60; font-weight: bold; }
+        .btn-assign { background-color: #0077b6; color: white; padding: 7px 14px; text-decoration: none; border-radius: 4px; font-size: 13px; transition: 0.3s; }
+        .btn-assign:hover { background-color: #023e8a; }
+        .fee-text { color: #0077b6; font-weight: 600; }
     </style>
 </head>
- 
 <body>
- 
-<a th:href="@{/admin/dashboard}" class="back-link">← Back to Admin</a>
- 
-<h2>Appointments List</h2>
- 
+
+<a th:href="@{/admin/dashboard}" class="back-link">← Back to Admin Dashboard</a>
+
+<h2>Appointments Management</h2>
+
 <table>
     <thead>
-       <!-- Inside the <thead> -->
-<tr>
-    <th>ID</th>
-    <th>Patient ID</th>
-    <th>Doctor Name</th> <!-- Updated for clarity -->
-    <th>Date</th>
-    <th>Time</th>
-    <th>Status</th>
-    <th>Actions</th> <!-- New Column -->
-</tr>
-
-<!-- Inside the <tbody> -->
-<tr th:each="a : ${appointments}">
-    <td th:text="${a.id}"></td>
-    <td th:text="${a.patient != null ? a.patient.id : 'N/A'}"></td>
-    <!-- Display Doctor Name instead of just ID -->
-    <td th:text="${a.doctor != null ? a.doctor.name : 'Unassigned'}"></td>
-    <td th:text="${a.appointmentDate != null ? #temporals.format(a.appointmentDate, 'dd-MM-yyyy') : 'N/A'}"></td>
-    <td th:text="${a.timeSlot}"></td>
-    <td th:classappend="${a.status == 'CONFIRMED'} ? 'status-confirmed' : 'status-pending'" th:text="${a.status}"></td>
-    
-    <td>
-        <!-- Button to trigger the Assign Doctor page -->
-        <a th:if="${a.doctor == null}" 
-           th:href="@{/appointments/assign/{id}(id=${a.id})}" 
-           style="background-color: #0077b6; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 13px;">
-           Assign
-        </a>
-        <span th:if="${a.doctor != null}" style="color: #27ae60; font-size: 13px;">✔ Assigned</span>
-    </td>
-</tr>
+        <tr>
+            <th>ID</th>
+            <th>Patient ID</th>
+            <th>Department</th> <!-- ✅ Added -->
+            <th>Consultation Fee</th> <!-- ✅ Added -->
+            <th>Doctor Name</th>
+            <th>Date & Time</th>
+            <th>Payment Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="a : ${appointments}">
+            <td th:text="${a.id}"></td>
+            <td th:text="${a.patient != null ? a.patient.id : 'N/A'}"></td>
+            
+            <!-- ✅ Displays Department (available from booking) -->
+            <td th:text="${a.department != null ? a.department.deptName : 'N/A'}"></td>
+            
+            <!-- ✅ Displays the inherited Fee -->
+            <td class="fee-text" th:text="${a.department != null ? '₹ ' + a.department.consultationFee : '₹ 0.0'}"></td>
+            
+            <td th:text="${a.doctor != null ? 'Dr. ' + a.doctor.name : 'Unassigned'}"></td>
+            
+            <td>
+                <span th:text="${a.appointmentDate != null ? #temporals.format(a.appointmentDate, 'dd-MM-yyyy') : 'N/A'}"></span><br/>
+                <small class="text-muted" th:text="${a.timeSlot}"></small>
+            </td>
+            
+            <td th:class="${a.status == 'CONFIRMED' ? 'status-confirmed' : 'status-pending'}" 
+                th:text="${a.status}"></td>
+            
+            <td>
+                <!-- Only allow Assignment if no doctor is present -->
+                <a th:if="${a.doctor == null}" 
+                   th:href="@{/appointments/assign/{id}(id=${a.id})}" 
+                   class="btn-assign">Assign Doctor</a>
+                
+                <span th:if="${a.doctor != null}" style="color: #27ae60;">
+                   <i class="fas fa-check-circle"></i> Complete
+                </span>
+            </td>
+        </tr>
+        
+        <!-- Empty State -->
+        <tr th:if="${#lists.isEmpty(appointments)}">
+            <td colspan="8" style="padding: 40px; color: #888;">No appointments found in the system.</td>
+        </tr>
     </tbody>
 </table>
- 
+
 </body>
 </html>
-
- 

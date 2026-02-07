@@ -1,6 +1,9 @@
 package com.cg.service;
 
 import com.cg.dto.AppointmentDTO;
+import com.cg.dto.PaymentDTO;
+import com.cg.model.Billing;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,4 +16,6 @@ public interface IAppointmentService {
     
     // ✅ Add this for Admin Allotment
     void assignDoctorToAppointment(Long appointmentId, Long doctorId);
+    void finalizeBookingWithPayment(PaymentDTO paymentDto);
+	List<Billing> getBillsByPatientId(Long id);
 }

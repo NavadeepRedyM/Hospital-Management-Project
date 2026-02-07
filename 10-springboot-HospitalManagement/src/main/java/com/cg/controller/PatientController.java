@@ -1,19 +1,14 @@
 package com.cg.controller;
 
-import com.cg.dto.AppointmentDTO;
-import com.cg.dto.BookAppointmentForm;
-import com.cg.dto.DepartmentDTO;
-import com.cg.dto.PatientDTO;
-import com.cg.service.DepartmentService;
-import com.cg.service.IAppointmentService;
-import com.cg.service.IPatientService;
+import com.cg.dto.*;
+import com.cg.model.Billing;
+import com.cg.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Controller
@@ -29,12 +24,8 @@ public class PatientController {
     @Autowired
     private DepartmentService departmentService;
 
-    /**
-     * Updated to return PatientDTO to match Service return type
-     */
     private PatientDTO getCurrentPatient(UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        return patientService.findByUsername(username).orElse(null);
+        return patientService.findByUsername(userDetails.getUsername()).orElse(null);
     }
 
     @GetMapping("/profile")
@@ -48,9 +39,7 @@ public class PatientController {
     @GetMapping("/appointments")
     public String myAppointments(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         PatientDTO patient = getCurrentPatient(userDetails);
-        // Corrected to use AppointmentDTO List
         List<AppointmentDTO> appointments = appointmentService.listForPatient(patient.getId());
-        
         model.addAttribute("patient", patient);
         model.addAttribute("appointments", appointments);
         return "hospital/patient-appointments";
@@ -58,10 +47,8 @@ public class PatientController {
 
     @GetMapping("/book-appointment")
     public String bookAppointmentForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        // Corrected to use DepartmentDTO List
         List<DepartmentDTO> departments = departmentService.getAllDepartments();
         PatientDTO patient = getCurrentPatient(userDetails);
-        
         model.addAttribute("patient", patient);
         model.addAttribute("form", new BookAppointmentForm());
         model.addAttribute("departments", departments); 
@@ -71,29 +58,63 @@ public class PatientController {
     @PostMapping("/book-appointment")
     public String bookSubmit(
             @AuthenticationPrincipal UserDetails user,
-            @ModelAttribute("form") BookAppointmentForm form,
-            Model model
+            @ModelAttribute("form") BookAppointmentForm form
     ) {
-        // 1. Fetch DepartmentDTO and safely get doctor
-        DepartmentDTO dept = departmentService.getDepartmentById(form.getDepartmentId());
-        
-        if (dept.getDoctors() == null || dept.getDoctors().isEmpty()) {
-            throw new RuntimeException("No doctors available in this department.");
-        }
-        
-        Long assignedDoctorId = dept.getDoctors().get(0).getId();
-
-        // 2. Call the book method which returns AppointmentDTO
+        // ✅ Fee is now tied to the department, not a specific doctor
         AppointmentDTO appt = appointmentService.book(
                 user.getUsername(),
                 form.getDepartmentId(),
-                assignedDoctorId,
+                null, // Doctor can be null initially (awaiting admin allotment)
                 form.getDate(),
                 form.getTime(),
                 form.getReason()
         );
 
+        return "redirect:/patient/payment/" + appt.getId();
+    }
+
+    @GetMapping("/payment/{id}")
+    public String showPaymentPage(@PathVariable Long id, Model model) {
+        AppointmentDTO appt = appointmentService.getAppointmentById(id);
+        
+        // Prepare Payment DTO
+        PaymentDTO paymentDTO = new PaymentDTO();
+        paymentDTO.setAppointmentId(id);
+        
+        // ✅ CRITICAL FIX: Pull fee from Department (Available even if Doctor is null)
+        double fee = appt.getDepartment().getConsultationFee();
+        paymentDTO.setAmount(fee);
+        paymentDTO.setStatus("PENDING");
+
         model.addAttribute("appointment", appt);
+        model.addAttribute("payment", paymentDTO);
+        return "hospital/patient-payment";
+    }
+
+    @PostMapping("/confirm-payment")
+    public String confirmPayment(
+            @ModelAttribute("payment") PaymentDTO paymentDto,
+            Model model
+    ) {
+        appointmentService.finalizeBookingWithPayment(paymentDto);
+        AppointmentDTO finalAppt = appointmentService.getAppointmentById(paymentDto.getAppointmentId());
+        model.addAttribute("appointment", finalAppt);
         return "hospital/appointment-success"; 
+    }
+    @GetMapping("/bills")
+    public String viewMyBills(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        // 1. Get the current patient profile
+        PatientDTO patient = getCurrentPatient(userDetails);
+        
+        // 2. Fetch bills using the service we discussed earlier
+        // If you haven't implemented IBillingServiceImpl yet, use the repository directly for now
+        List<Billing> bills = appointmentService.getBillsByPatientId(patient.getId());
+        
+        // 3. Pass the list to Thymeleaf
+        model.addAttribute("patient", patient);
+        model.addAttribute("bills", bills);
+        
+        // 4. Return the HTML file (ensure the path matches your templates folder)
+        return "hospital/patient-bills"; 
     }
 }

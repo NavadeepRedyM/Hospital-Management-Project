@@ -27,7 +27,13 @@
 
 <div class="container">
     <div class="header">
-        <h2 th:text="'Doctors in ' + ${department.deptName}"></h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 th:text="'Doctors in ' + ${department.deptName}"></h2>
+            <!-- ✅ Added Fee Badge -->
+            <div style="background: #e1f5fe; color: #01579b; padding: 8px 15px; border-radius: 20px; font-weight: bold; border: 1px solid #b3e5fc;">
+                <i class="fas fa-tag"></i> Fee: ₹<span th:text="${department.consultationFee}">0.0</span>
+            </div>
+        </div>
         <p>
             <i class="fas fa-user-tie" style="color: #0077b6;"></i> 
             <strong>HOD:</strong>

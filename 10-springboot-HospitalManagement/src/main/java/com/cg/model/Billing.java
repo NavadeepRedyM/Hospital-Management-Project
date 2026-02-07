@@ -1,7 +1,8 @@
 package com.cg.model;
  
 import jakarta.persistence.*;
-import java.util.Date;
+
+import java.time.LocalDate;
  
 @Entity
 @Table(name = "billing")
@@ -27,8 +28,25 @@ public class Billing {
     private String paymentStatus;
     private String paymentMethod;
  
-    @Temporal(TemporalType.DATE)
-    private Date billingDate;
+    @Column(name = "billing_date")
+    private LocalDate  billingDate;
+    
+    @PrePersist
+    @PreUpdate
+    public void calculateTaxAndTotal() {
+        // Logic: 18% Tax Calculation
+        this.tax = this.amount * 0.18;
+        this.totalAmount = this.amount + this.tax;
+    }
+// Changed from java.util.Date
+
+    public LocalDate getBillingDate() {
+        return billingDate;
+    }
+
+    public void setBillingDate(LocalDate billingDate) {
+        this.billingDate = billingDate;
+    }
  
     // ---------- Constructors ----------
     public Billing() {
@@ -98,13 +116,20 @@ public class Billing {
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+	public Billing(Long id, Appointment appointment, Patient patient, double amount, double tax, double totalAmount,
+			String paymentStatus, String paymentMethod, LocalDate billingDate) {
+		super();
+		this.id = id;
+		this.appointment = appointment;
+		this.patient = patient;
+		this.amount = amount;
+		this.tax = tax;
+		this.totalAmount = totalAmount;
+		this.paymentStatus = paymentStatus;
+		this.paymentMethod = paymentMethod;
+		this.billingDate = billingDate;
+	}
  
-    public Date getBillingDate() {
-        return billingDate;
-    }
- 
-    public void setBillingDate(Date billingDate) {
-        this.billingDate = billingDate;
-    }
 }
  

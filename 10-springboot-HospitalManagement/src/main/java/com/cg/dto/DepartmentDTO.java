@@ -1,8 +1,7 @@
 package com.cg.dto;
 
 import java.util.List;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import com.cg.model.Doctor;
 
 public class DepartmentDTO {
@@ -10,15 +9,11 @@ public class DepartmentDTO {
     private Long id;
 
     @NotBlank(message = "Department Name is Required")
-    @Pattern(
-        regexp = "[A-Za-z ]+$",
-        message = "Department Name must contain only Letters")
+    @Pattern(regexp = "[A-Za-z ]+$", message = "Department Name must contain only Letters")
     private String deptName;
 
     @NotBlank(message = "HOD Name is Required")
-    @Pattern(
-        regexp = "[A-Za-z ]+$",
-        message = "HOD Name must contain only Letters")
+    @Pattern(regexp = "[A-Za-z ]+$", message = "HOD Name must contain only Letters")
     private String hodName;
 
     @NotBlank(message = "Location is Required")
@@ -26,20 +21,21 @@ public class DepartmentDTO {
 
     private String description;
 
-    // Direct 1:1 list of Doctor entities as per your request
+    @Positive(message = "Consultation fee must be greater than zero")
+    private double consultationFee; // Added fee field
+
     private List<Doctor> doctors;
 
-    // Default Constructor
-    public DepartmentDTO() {
-    }
+    public DepartmentDTO() {}
 
-    // Parameterized Constructor
-    public DepartmentDTO(Long id, String deptName, String hodName, String location, String description, List<Doctor> doctors) {
+    public DepartmentDTO(Long id, String deptName, String hodName, String location, 
+                         String description, double consultationFee, List<Doctor> doctors) {
         this.id = id;
         this.deptName = deptName;
         this.hodName = hodName;
         this.location = location;
         this.description = description;
+        this.consultationFee = consultationFee;
         this.doctors = doctors;
     }
 
@@ -58,6 +54,9 @@ public class DepartmentDTO {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public double getConsultationFee() { return consultationFee; }
+    public void setConsultationFee(double consultationFee) { this.consultationFee = consultationFee; }
 
     public List<Doctor> getDoctors() { return doctors; }
     public void setDoctors(List<Doctor> doctors) { this.doctors = doctors; }
