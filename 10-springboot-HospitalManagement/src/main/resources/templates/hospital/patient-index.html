@@ -35,7 +35,9 @@
     <div class="main-content">
         <div class="header-card">
             <!-- 🔹 One-line fix: show the logged in patient's name -->
-            <h1>Welcome <span th:text="${patient != null ? patient.fullName : 'user'}">user</span></h1>
+            <!-- Replace the old <h1> line with this one -->
+<h1>Welcome <span th:text="${patient != null ? patient.name : 'user'}">user</span></h1>
+
             <p>Here you can manage your appointments, records and bills.</p>
         </div>
 

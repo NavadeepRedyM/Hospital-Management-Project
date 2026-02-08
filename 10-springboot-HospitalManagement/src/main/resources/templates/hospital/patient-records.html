@@ -17,15 +17,39 @@
         }
         .record-header { color: #0077b6; font-weight: bold; font-size: 1.1rem; }
         .label { font-weight: 600; color: #444; width: 120px; display: inline-block; }
+        .btn-dash {
+    text-decoration: none;
+    background-color: #2c3e50; /* Match your sidebar */
+    color: white;
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease;
+}
+
+.btn-dash:hover {
+    background-color: #34495e;
+    color: #5dade2; /* Match your sidebar heading color */
+}
+        
     </style>
 </head>
 <body>
 
-<div class="container" style="max-width: 900px;">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-file-medical me-2"></i>My Medical History</h2>
-        <a th:href="@{/patient/dashboard}" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
-    </div>
+<!-- Inside your patient-records.html container -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-file-medical me-2"></i>My Medical History</h2>
+    
+    <!-- This now points to the @GetMapping("/dashboard") in your controller -->
+    <a th:href="@{/patient/dashboard}" class="btn-dash">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+
 
     <!-- Loop through records -->
     <div th:each="rec : ${records}" class="record-card">

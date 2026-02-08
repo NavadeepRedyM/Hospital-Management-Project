@@ -18,4 +18,5 @@ public interface IAppointmentService {
     void assignDoctorToAppointment(Long appointmentId, Long doctorId);
     void finalizeBookingWithPayment(PaymentDTO paymentDto);
 	List<Billing> getBillsByPatientId(Long id);
+	
 }

@@ -23,10 +23,21 @@ public class PatientController {
 
     @Autowired
     private DepartmentService departmentService;
+    
+    @Autowired
+    private MedicalRecordService medicalRecordService;
 
     private PatientDTO getCurrentPatient(UserDetails userDetails) {
         return patientService.findByUsername(userDetails.getUsername()).orElse(null);
     }
+    
+    @GetMapping("/dashboard")
+    public String patientDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        PatientDTO patient = getCurrentPatient(userDetails);
+        model.addAttribute("patient", patient);
+        return "hospital/patient-index"; // This returns your patient-index.html
+    }
+
 
     @GetMapping("/profile")
     public String viewProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -117,4 +128,29 @@ public class PatientController {
         // 4. Return the HTML file (ensure the path matches your templates folder)
         return "hospital/patient-bills"; 
     }
+    
+    @GetMapping("/records")
+    public String viewMedicalRecords(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        // 1. Get current patient
+        PatientDTO patient = getCurrentPatient(userDetails);
+        
+        // 2. Fetch records using your new Service method
+        List<MedicalRecordDTO> records = medicalRecordService.getMedicalRecordsByPatient(patient.getId());
+
+        // 3. Add to model
+        model.addAttribute("patient", patient);
+        model.addAttribute("records", records);
+        
+        return "hospital/patient-records"; 
+    }
+    
+    @GetMapping("/cancel-payment/{id}")
+    public String cancelPayment(@PathVariable Long id) {
+        // Call a service method to delete or mark the appointment as CANCELLED
+        appointmentService.deleteAppointment(id); 
+        
+        // Redirect to dashboard with a cancel message (optional)
+        return "redirect:/patient/dashboard?cancelled=true";
+    }
+
 }
