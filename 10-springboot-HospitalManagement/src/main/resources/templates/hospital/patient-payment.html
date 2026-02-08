@@ -19,51 +19,41 @@
         <div class="card-header text-white p-3 text-center">
             <h5 class="mb-0">Secure Payment Confirmation</h5>
         </div>
-        <div class="card-body p-4">
-            
-            <div class="text-center mb-4">
-                <p class="text-muted mb-1">Total Consultation Fee</p>
-                <!-- Pulling fee safely from Department -->
-                <div class="fee-display" th:text="'₹' + ${appointment.department?.consultationFee ?: '0.0'}">₹0.0</div>
-            </div>
+       <div class="card-body p-4">
+    <div class="text-center mb-4">
+        <p class="text-muted mb-1">Total Consultation Fee</p>
+        <div class="fee-display" th:text="'₹' + ${appointment.department?.consultationFee ?: '0.0'}">₹0.0</div>
+    </div>
 
-            <div class="border-top pt-3">
-                <p><strong>Department:</strong> <span th:text="${appointment.department?.deptName ?: 'N/A'}">Cardiology</span></p>
-                
-                <!-- Safe check for Doctor to avoid 500 error -->
-                <p><strong>Treating Doctor:</strong> 
-                    <span th:text="${appointment.doctor != null ? 'Dr. ' + appointment.doctor.name : 'Awaiting Assignment'}">Awaiting Assignment</span>
-                </p>
+    <div class="border-top pt-3">
+        <p><strong>Department:</strong> <span th:text="${appointment.department?.deptName ?: 'N/A'}">Cardiology</span></p>
+    </div>
 
-                <!-- ✅ This field now works because we added it to the DTO -->
-                <p><strong>Payment Method:</strong> 
-                    <span class="badge bg-info text-dark px-3 py-2" th:text="${appointment.paymentMethod ?: 'Not Selected'}">UPI</span>
-                </p>
-            </div>
+    <form th:action="@{/patient/confirm-payment}" th:object="${payment}" method="post" class="mt-4">
+        <!-- Hidden fields remain so the data still sends to the server -->
+        <input type="hidden" th:field="*{appointmentId}" />
+        <input type="hidden" th:field="*{amount}" th:value="${appointment.department?.consultationFee}" />
+        <input type="hidden" th:field="*{paymentMethod}" th:value="${appointment.paymentMethod}" />
+        <input type="hidden" th:field="*{status}" value="COMPLETED" />
 
-            <form th:action="@{/patient/confirm-payment}" th:object="${payment}" method="post" class="mt-4">
-                <!-- Hidden fields for PaymentDTO -->
-                <input type="hidden" th:field="*{appointmentId}" />
-                
-                <!-- ✅ Pass values from the Appointment object into the Payment form -->
-                <input type="hidden" th:field="*{amount}" th:value="${appointment.department?.consultationFee}" />
-                <input type="hidden" th:field="*{paymentMethod}" th:value="${appointment.paymentMethod}" />
-                <input type="hidden" th:field="*{status}" value="COMPLETED" />
-
-                <div class="alert alert-warning small mb-4">
-                    By clicking below, you confirm that you have completed the payment via 
-                    <strong th:text="${appointment.paymentMethod}"></strong>.
-                </div>
-
-                <button type="submit" class="btn btn-success w-100 py-3 fw-bold">
-                    Confirm & Complete Booking
-                </button>
-                
-                <div class="text-center mt-3">
-                    <a th:href="@{/patient/appointments}" class="text-decoration-none text-secondary small">Cancel Transaction</a>
-                </div>
-            </form>
+        <div class="alert alert-warning small mb-4">
+            By clicking below, you confirm that you have completed the payment for this consultation.
         </div>
+
+        <button type="submit" class="btn btn-success w-100 py-3 fw-bold">
+            Confirm & Complete Booking
+        </button>
+    </form>
+    <div class="text-center mt-3">
+    <!-- Point to a new cancel route instead of just the dashboard -->
+    <a th:href="@{/patient/cancel-payment/{id}(id=${appointment.id})}" 
+       class="text-decoration-none text-danger small" 
+    >
+       Cancel & Delete Appointment
+    </a>
+</div>
+
+</div>
     </div>
 </div>
 
