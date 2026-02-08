@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${errorTitle}">Error</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <meta charset="UTF-8">
+    <title>Error Page</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div class="error-container">
-        <h1 th:text="${errorTitle}">Error Title</h1>
-        <p th:text="${errorMessage}">An unexpected error has occurred.</p>
-        <div th:if="${#lists.isEmpty(validationErrors)}">
-            <p>No validation errors.</p>
-        </div>
-        <div th:if="${!#lists.isEmpty(validationErrors)}">
-            <h2>Validation Errors:</h2>
+        <h1 th:text="${error.message}">Error Occurred</h1>
+        <p th:text="${error.details}">An error has occurred. Please try again later.</p>
+        <div class="validation-errors">
             <ul>
-                <li th:each="error : ${validationErrors}" th:text="${error}"></li>
+                <li th:each="error : ${#lists.toArray(errors)}" th:text="${error}"></li>
             </ul>
         </div>
-        <a th:href="@{/home}" class="btn">Go to Home</a>
-        <a th:href="@{/contact}" class="btn">Contact Support</a>
+        <a href="/" class="btn">Go to Home</a>
     </div>
 </body>
 </html>
