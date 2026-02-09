@@ -18,6 +18,7 @@ import com.cg.service.DoctorService;
 import com.cg.service.IDepartmentService; // Added to load departments for the dropdown
 
 import jakarta.validation.Valid;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
@@ -30,14 +31,13 @@ public class AdminController {
 
     @Autowired
     private IDepartmentService departmentService; // Needed to fetch department list
-    
+
     
     @GetMapping("/dashboard")
     public String dashboard() {
         return "hospital/admin-index";
         // or "admin-dashboard" — use the HTML file you already have
     }
-
     @GetMapping("/manage-doctors")
     public String showDoctorsList(Model model) {
         model.addAttribute("listOfDoctors", doctorService.findAllDoctors());
@@ -85,8 +85,16 @@ public class AdminController {
     }
 
     @PostMapping("/delete-doctor/{id}")
-    public String deleteDoctor(@PathVariable Long id) {
-        doctorService.deleteDoctor(id);
+    public String deleteDoctor(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            doctorService.deleteDoctor(id);
+            redirectAttributes.addFlashAttribute("success", "Doctor deleted successfully.");
+        } catch (IllegalStateException e) {
+            // Catch the "Cannot delete" error from the service
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "An unexpected error occurred.");
+        }
         return "redirect:/admin/manage-doctors";
     }
     @GetMapping("/billing-reports")

@@ -21,6 +21,7 @@ public class DoctorService implements IDoctorService {
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
     
+    
     @Override
     public DoctorDTO findDoctorById(Long id) {
         return doctorRepository.findById(id)
@@ -30,11 +31,11 @@ public class DoctorService implements IDoctorService {
     
     @Override
     public List<DoctorDTO> findAllDoctors() {
-        return doctorRepository.findAll().stream()
+        // Change from findAll() to your new filtered method
+        return doctorRepository.findAllActive().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-    
     @Override
     @Transactional
     public DoctorDTO addDoctor(DoctorDTO doctorDTO) {
@@ -106,14 +107,49 @@ public class DoctorService implements IDoctorService {
                 .collect(Collectors.toList());
     }
 
+ // Inside com.cg.service.DoctorService.java
+
+ // Inside com.cg.service.DoctorService.java
+
+ // Add this field to your Doctor.java Entity
     @Override
     @Transactional
     public void deleteDoctor(Long id) {
-        if (!doctorRepository.existsById(id)) {
-            throw new RuntimeException("Cannot delete. Doctor not found with id: " + id);
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        // 1. Check for ACTIVE appointments
+        boolean hasActiveAppointments = doctor.getAppointments().stream()
+                .anyMatch(a -> "PENDING".equalsIgnoreCase(a.getStatus()) || 
+                               "CONFIRMED".equalsIgnoreCase(a.getStatus()) ||
+                               "PENDING_ALLOTMENT".equalsIgnoreCase(a.getStatus()));
+
+        if (hasActiveAppointments) {
+            throw new IllegalStateException("Cannot delete doctor '" + doctor.getName() + 
+                "'. They still have active appointments. Please reassign or cancel them first.");
         }
-        doctorRepository.deleteById(id);
+
+        // 2. SOFT DELETE: Deactivate
+        doctor.setActive(false);
+        
+        // 3. BREAK THE LINK WITH DEPARTMENT
+        // This ensures the doctor stops showing up in the Department's list immediately
+        if (doctor.getDepartment() != null) {
+            doctor.getDepartment().getDoctors().remove(doctor);
+        }
+        
+        // 4. Disable User account
+        if (doctor.getUser() != null) {
+            doctor.getUser().setEnabled(false);
+        }
+
+        doctorRepository.save(doctor);
     }
+
+
+
+
+
 
     @Override
     public DoctorDTO getDoctorByUsername(String username) {

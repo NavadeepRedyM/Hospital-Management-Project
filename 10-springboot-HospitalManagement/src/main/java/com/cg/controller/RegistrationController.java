@@ -3,14 +3,18 @@ package com.cg.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.cg.dto.DoctorDTO;
+import com.cg.dto.UserDTO;
 import com.cg.model.User;
 import com.cg.model.Patient;
 import com.cg.repository.PatientRepository;
 import com.cg.service.DoctorService;
 import com.cg.service.UserService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class RegistrationController {
@@ -32,18 +36,31 @@ public class RegistrationController {
     }
 
     @PostMapping("/register-user")
-    public String saveRegisteredUser(@ModelAttribute("user") User user) {
-        user.setRole("PATIENT"); 
+    public String saveRegisteredUser(@Valid @ModelAttribute("user") UserDTO userDto, BindingResult result) {
+        // 1. Check if the password/username meets constraints
+        if (result.hasErrors()) {
+            // If password is weak, this returns to the form and 
+            // your GlobalExceptionHandler/BindingResult shows the errors.
+            return "hospital/register-user"; 
+        }
+
+        User user = new User();
+        user.setUsername(userDto.getUsername());
+        // The password here is plain text; your UserServiceImpl should encode it!
+        user.setPassword(userDto.getPassword()); 
+        user.setRole("ROLE_PATIENT"); // Ensure this matches the ROLE_ prefix used in Security
+        
         userService.saveUser(user); 
         
-        // Create the placeholder patient so Admin can fill details later
+        // Create placeholder
         Patient placeholder = new Patient();
         placeholder.setUsername(user.getUsername());
         placeholder.setName("PENDING_DETAILS"); 
-        
         patientRepository.save(placeholder);
+        
         return "redirect:/login?success";
     }
+
     
     // 2. DOCTOR ACCOUNT ACTIVATION
     @GetMapping("/register-doctor")
@@ -56,24 +73,26 @@ public class RegistrationController {
                                             @RequestParam String password, 
                                             Model model) {
         
+        // 1. Fetch the doctor profile
         DoctorDTO doctorDto = doctorService.getDoctorByUsername(username);
 
         if (doctorDto == null) {
-            model.addAttribute("error", "Username not assigned to any doctor profile. Please contact Admin.");
+            model.addAttribute("error", "Username not assigned to any doctor profile.");
+            return "hospital/register-doctor";
+        }
+
+        // 2. MANUAL VALIDATION for Doctor Password
+        // This matches the regex pattern in your UserDTO
+        String passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
+        if (!password.matches(passwordPattern)) {
+            model.addAttribute("error", "Password is too weak! Must be 8+ chars, include Uppercase, Lowercase, Digit, and Special Character.");
             return "hospital/register-doctor";
         }
 
         User user = doctorDto.getUser(); 
         if (user != null) {
-            // Update the password
             user.setPassword(password); 
-            userService.saveUser(user); 
-            
-            /* 
-               ✅ NOTE: We do not need to set consultationFee here.
-               The DoctorService.addDoctor(doctorDto) will re-link the doctor 
-               to their department, automatically inheriting the fee.
-            */
+            userService.saveUser(user); // Your service should handle the BCrypt encoding
             doctorService.addDoctor(doctorDto); 
         }
 

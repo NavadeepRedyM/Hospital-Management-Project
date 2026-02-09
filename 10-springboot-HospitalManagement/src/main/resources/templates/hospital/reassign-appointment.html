@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reassign Doctor | Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f8; padding: 40px; }
+        .form-container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h3 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #0077b6; padding-bottom: 10px; }
+        .info-group { margin-bottom: 15px; font-size: 14px; color: #555; }
+        .info-group strong { color: #2c3e50; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+        select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 20px; font-size: 14px; }
+        .btn-submit { background: #0077b6; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
+        .btn-submit:hover { background: #023e8a; }
+        .back-btn { display: block; text-align: center; margin-top: 15px; color: #888; text-decoration: none; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h3>Reassign Appointment</h3>
+    
+    <div class="info-group">
+        <strong>Appointment ID:</strong> <span th:text="${appointment.id}"></span><br/>
+        <strong>Patient:</strong> <span th:text="${appointment.patient.name}"></span><br/>
+        <strong>Department:</strong> <span th:text="${appointment.department.deptName}"></span>
+    </div>
+
+    <form th:action="@{/appointments/reassign}" method="post">
+        <!-- Hidden ID to send back to controller -->
+        <input type="hidden" name="appointmentId" th:value="${appointment.id}" />
+
+        <label for="doctorId">Select New Doctor:</label>
+        <select name="doctorId" id="doctorId" required>
+            <option value="" disabled selected>-- Choose a Doctor --</option>
+            <!-- Only shows doctors from the SAME department -->
+            <option th:each="doc : ${doctors}" 
+                    th:value="${doc.id}" 
+                    th:text="${'Dr. ' + doc.name + ' (' + doc.qualification + ')'}">
+            </option>
+        </select>
+
+        <button type="submit" class="btn-submit">Confirm Reassignment</button>
+    </form>
+    
+    <a th:href="@{/appointments}" class="back-btn">Cancel and Go Back</a>
+</div>
+
+</body>
+</html>

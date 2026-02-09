@@ -17,12 +17,6 @@ public class PaymentDTO {
 
     @Positive(message = "Payment amount must be greater than zero")
     private double amount;
-    @Positive(message ="Tax amount must be greater than zero")
-    private double tax;
-    
-    private double total;
-    
-  
 
     @NotBlank(message = "Payment status is required")
     @Pattern(regexp = "^(PENDING|COMPLETED|FAILED)$", message = "Status must be PENDING, COMPLETED, or FAILED")
@@ -33,17 +27,15 @@ public class PaymentDTO {
 
     @PastOrPresent(message = "Payment date cannot be in the future")
     private LocalDateTime paymentDate;
+    @Positive(message ="Tax amount must be greater than zero")
+    private double tax;
     
-    
+    private double total;
 
     // Constructors
     public PaymentDTO() {}
 
-   
-
-
-
-	public PaymentDTO(Long id, @NotNull(message = "Appointment ID is mandatory to link the payment") Long appointmentId,
+    public PaymentDTO(Long id, @NotNull(message = "Appointment ID is mandatory to link the payment") Long appointmentId,
 			@NotBlank(message = "Payment method must be selected") @Pattern(regexp = "^(UPI|CREDIT_CARD|DEBIT_CARD|CASH|NET_BANKING)$", message = "Invalid payment method. Allowed: UPI, CREDIT_CARD, DEBIT_CARD, CASH, NET_BANKING") String paymentMethod,
 			@Positive(message = "Payment amount must be greater than zero") double amount,
 			@Positive(message = "Tax amount must be greater than zero") double tax, double total,
@@ -60,18 +52,6 @@ public class PaymentDTO {
 		this.status = status;
 		this.transactionId = transactionId;
 		this.paymentDate = paymentDate;
-	}
-
-
-
-
-
-	public double getTax() {
-		return tax;
-	}
-
-	public void setTax(double tax) {
-		this.tax = tax;
 	}
 
 	public Long getId() {
@@ -130,18 +110,21 @@ public class PaymentDTO {
 		this.paymentDate = paymentDate;
 	}
 
+	public double getTax() {
+		return tax;
+	}
 
+	public void setTax(double tax) {
+		this.tax = tax;
+	}
 
 	public double getTotal() {
 		return total;
 	}
 
-
-
 	public void setTotal(double total) {
 		this.total = total;
 	}
 
-	
    
 }

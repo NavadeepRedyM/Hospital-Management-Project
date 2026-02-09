@@ -32,8 +32,13 @@ public class Department {
     @Column(nullable = false)
     private double consultationFee;
 
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "department",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Doctor> doctors;
+    @Column(columnDefinition = "boolean default true")
+    private boolean active = true;
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 
     public Department() {
         super();

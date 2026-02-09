@@ -22,6 +22,15 @@ public class User {
 
 	@Column
 	private String role; // ROLE_ADMIN, ROLE_DOCTOR, ROLE_PATIENT
+	 private boolean enabled = true; // Add this field
+
+	    public boolean isEnabled() {
+	        return enabled;
+	    }
+
+	    public void setEnabled(boolean enabled) {
+	        this.enabled = enabled;
+	    }
 
 	public Long getId() {
 		return id;
@@ -54,6 +63,7 @@ public class User {
 	public void setRole(String role) {
 		this.role = role;
 	}
+
 
 }
 

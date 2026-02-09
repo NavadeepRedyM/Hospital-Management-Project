@@ -1,5 +1,6 @@
 package com.cg.controller;
- 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,18 +47,57 @@ public class AppointmentController {
     @GetMapping("/assign/{id}")
     public String showAssignForm(@PathVariable Long id, Model model) {
         AppointmentDTO appointment = appointmentService.getAppointmentById(id);
-        
-        // ✅ Use the Department ID saved during the patient's booking
         Long deptId = appointment.getDepartment().getId();
         
-        // Fetch only doctors from THIS department
-        List<Doctor> filteredDoctors = doctorRepository.findByDepartmentId(deptId);
+        // ✅ Filter to only include active doctors
+        List<Doctor> activeDoctors = doctorRepository.findByDepartmentId(deptId)
+                .stream()
+                .filter(Doctor::isActive)
+                .toList();
         
         model.addAttribute("appointment", appointment);
         model.addAttribute("deptName", appointment.getDepartment().getDeptName());
-        model.addAttribute("doctors", filteredDoctors);
+        model.addAttribute("doctors", activeDoctors);
         return "hospital/assign-doctor";
     }
+    @GetMapping("/reassign/{id}")
+    public String showReassignForm(@PathVariable Long id, Model model) {
+        AppointmentDTO appointment = appointmentService.getAppointmentById(id);
+        Long deptId = appointment.getDepartment().getId();
+        
+        // ✅ Filter to only include active doctors for reassignment
+        List<Doctor> sameDeptActiveDoctors = doctorRepository.findByDepartmentId(deptId)
+                .stream()
+                .filter(Doctor::isActive)
+                .toList();
+        
+        model.addAttribute("appointment", appointment);
+        model.addAttribute("deptName", appointment.getDepartment().getDeptName());
+        model.addAttribute("doctors", sameDeptActiveDoctors);
+        return "hospital/reassign-appointment"; 
+    }
+
+    @PostMapping("/reassign")
+    public String processReassign(@RequestParam Long appointmentId, 
+                                  @RequestParam Long doctorId, 
+                                  RedirectAttributes ra) {
+        try {
+            // This calls the service logic we created earlier
+            appointmentService.reassignDoctor(appointmentId, doctorId);
+            ra.addFlashAttribute("success", "Appointment reassigned successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Error: " + e.getMessage());
+        }
+        return "redirect:/appointments"; // Corrected redirect
+    }
+    @PostMapping("/cancel/{id}")
+    public String cancelAppt(@PathVariable Long id, RedirectAttributes ra) {
+        appointmentService.cancelAppointment(id);
+        ra.addFlashAttribute("success", "Appointment marked as Cancelled.");
+        // FIXED: Changed from /admin/appointments to /appointments
+        return "redirect:/appointments"; 
+    }
+
 
 
 

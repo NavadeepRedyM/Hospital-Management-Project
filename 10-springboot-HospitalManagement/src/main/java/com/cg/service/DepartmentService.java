@@ -6,20 +6,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cg.dto.DepartmentDTO;
 import com.cg.model.Department;
+import com.cg.model.Doctor;
+import com.cg.repository.AppointmentRepository;
 import com.cg.repository.DepartmentRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class DepartmentService implements IDepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+    
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
+ // In DepartmentService.java
     @Override
     public List<DepartmentDTO> getAllDepartments() {
-        return departmentRepository.findAll().stream()
+        // Change from findAll() to your new filtered method
+        return departmentRepository.findAllActive().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public DepartmentDTO getDepartmentById(Long id) {
@@ -27,11 +37,30 @@ public class DepartmentService implements IDepartmentService {
                 .map(this::convertToDTO)
                 .orElseThrow(() -> new RuntimeException("Department not found"));
     }
-
     @Override
+    @Transactional
     public void deleteDepartment(Long id) {
-        departmentRepository.deleteById(id);
+        Department dept = departmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Department not found"));
+
+        // 1. Safety Check: Still block if there are ACTIVE doctors
+        boolean hasActiveDoctors = dept.getDoctors().stream()
+                .anyMatch(Doctor::isActive);
+
+        if (hasActiveDoctors) {
+            throw new IllegalStateException("Cannot delete: " + dept.getDeptName() + " still has active doctors.");
+        }
+
+        // 2. SOFT DELETE: Simply mark as inactive
+        // This allows all MedicalRecords, Payments, and Bills to stay perfectly linked!
+        dept.setActive(false);
+        
+        departmentRepository.save(dept);
     }
+
+    
+
+
 
     // Helper: DTO -> Entity
     private Department convertToEntity(DepartmentDTO dto) {

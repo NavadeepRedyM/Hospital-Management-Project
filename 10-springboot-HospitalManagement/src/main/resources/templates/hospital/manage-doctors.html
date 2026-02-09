@@ -20,6 +20,8 @@
 <body>
 
     <div class="container">
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
         <h2>Manage Doctors</h2>
         
         <!-- Link to the Add Doctor form -->

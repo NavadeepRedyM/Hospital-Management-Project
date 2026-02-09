@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/departments")
@@ -56,17 +57,29 @@ public class DepartmentController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteDepartment(@PathVariable Long id) {
-        departmentService.deleteDepartment(id);
+    public String deleteDepartment(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            departmentService.deleteDepartment(id);
+            redirectAttributes.addFlashAttribute("success", "Department deleted successfully!");
+        } catch (IllegalStateException e) {
+            // Catch the error thrown by the service
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/admin/departments";
     }
 
     @GetMapping("/{id}/doctors")
     public String viewDoctorsByDepartment(@PathVariable Long id, Model model) {
        DepartmentDTO department = departmentService.getDepartmentById(id);
+       
+       // Filter the list so the UI only shows working doctors
+       var activeDoctors = department.getDoctors().stream()
+               .filter(doc -> doc.isActive())
+               .toList();
+
        model.addAttribute("department", department);
-       // department.getDoctors() returns List<Doctor> as defined in your DepartmentDTO
-       model.addAttribute("doctors", department.getDoctors());
+       model.addAttribute("doctors", activeDoctors);
        return "hospital/department-doctors";
     }
+
 }

@@ -29,14 +29,12 @@ public class DoctorController {
     private DoctorDTO getCurrentDoctor(UserDetails userDetails) {
         return doctorService.getDoctorByUsername(userDetails.getUsername()); 
     }
-    
     //Dashboard 
     @GetMapping("/dashboard")
     public String doctorDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("doctor", getCurrentDoctor(userDetails));
         return "hospital/doctor-index";
     }
-
     @GetMapping("/profile")
     public String viewProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("doctor", getCurrentDoctor(userDetails));

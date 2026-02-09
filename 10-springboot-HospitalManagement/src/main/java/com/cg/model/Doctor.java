@@ -36,11 +36,14 @@ public class Doctor {
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "doctor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}) 
     private List<Appointment> appointments;
 
-    @OneToMany(mappedBy = "doctor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "doctor")
     private List<MedicalRecord> medicalRecords;
+    
+    @Column(columnDefinition = "boolean default true")
+    private boolean active = true; 
 
     public Doctor() {
         super();
@@ -90,4 +93,13 @@ public class Doctor {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+    
 }

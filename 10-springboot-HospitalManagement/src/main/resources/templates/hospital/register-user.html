@@ -36,29 +36,54 @@
         <h4 style="text-align: center; margin-bottom: 30px; color: #34495e;">Create New Account</h4>
 
         <form th:action="@{/register-user}" th:object="${user}" method="post">
-            
-            <!-- Username Field Group -->
-            <div class="form-group-spacing">
-                <label class="form-label">Username (Email)</label> 
-                <input type="text" th:field="*{username}" class="form-control" placeholder="Enter your username" required /> 
-            </div>
+    
+    <!-- Username Field Group -->
+    <div class="form-group-spacing">
+        <label class="form-label">Username</label> 
+        <input type="text" th:field="*{username}" class="form-control" placeholder="Enter your username" />
+        <!-- 🔴 Shows Username validation errors -->
+        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: #e74c3c; font-size: 0.85em; margin-top: 5px;"></div>
+    </div>
 
-            <!-- Password Field Group -->
-            <div class="form-group-spacing">
-                <label class="form-label">Password</label> 
-                <input type="password" th:field="*{password}" class="form-control" placeholder="Create a password" required /> 
-            </div>
+    <!-- Password Field Group -->
+    <div class="form-group-spacing">
+        <label class="form-label">Password</label> 
+        <input type="password" id="passwordField" th:field="*{password}" class="form-control" placeholder="Create a password" />
+        
+        <!-- 👁️ Show Password Toggle -->
+        <div style="margin-top: 5px; font-size: 0.85em;">
+            <input type="checkbox" onclick="togglePassword()"> Show Password
+        </div>
 
-            <!-- Hidden Role -->
-            <input type="hidden" th:field="*{role}" value="PATIENT" />
+        <!-- 🔴 Shows specific Password errors (Complexity, Size, etc.) -->
+        <div th:if="${#fields.hasErrors('password')}" style="color: #e74c3c; font-size: 0.85em; margin-top: 5px;">
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li th:each="err : ${#fields.errors('password')}" th:text="${err}"></li>
+            </ul>
+        </div>
+    </div>
 
-            <div class="mt-4">
-                <button type="submit" class="btn w-100 btn-lg" style="background: #2c3e50; color: white; border-radius: 8px;">
-                    Register Now
-                </button>
-            </div>
-        </form>
+    <!-- Hidden Role -->
+    <input type="hidden" th:field="*{role}" value="PATIENT" />
 
+    <div class="mt-4">
+        <button type="submit" class="btn w-100 btn-lg" style="background: #2c3e50; color: white; border-radius: 8px;">
+            Register Now
+        </button>
+    </div>
+</form>
+
+<!-- Simple Script for the Password Toggle -->
+<script>
+    function togglePassword() {
+        var x = document.getElementById("passwordField");
+        if (x.type === "password") {
+            x.type = "text";
+        } else {
+            x.type = "password";
+        }
+    }
+</script>
         <div style="text-align: center; margin-top: 25px; font-size: 0.95em;">
             Already have an account? 
             <a th:href="@{/login}" style="color: #3498db; text-decoration: none; font-weight: bold;">Login</a>
