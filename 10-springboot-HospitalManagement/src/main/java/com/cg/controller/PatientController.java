@@ -107,9 +107,22 @@ public class PatientController {
             @ModelAttribute("payment") PaymentDTO paymentDto,
             Model model
     ) {
+    	
+    	// ✅ CALCULATE HERE (this was missing)
+    	   double baseAmount = paymentDto.getAmount();
+    	   double tax = baseAmount * 0.18;
+    	   double total = baseAmount + tax;
+    	   paymentDto.setTax(tax);
+    	   paymentDto.setTotal(total);
+    	   paymentDto.setStatus("COMPLETED");
+    	
+    	
+    	
+    	
         appointmentService.finalizeBookingWithPayment(paymentDto);
         AppointmentDTO finalAppt = appointmentService.getAppointmentById(paymentDto.getAppointmentId());
         model.addAttribute("appointment", finalAppt);
+        model.addAttribute("payment",paymentDto);
         return "hospital/appointment-success"; 
     }
     @GetMapping("/bills")

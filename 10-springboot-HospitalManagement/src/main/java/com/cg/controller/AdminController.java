@@ -30,6 +30,13 @@ public class AdminController {
 
     @Autowired
     private IDepartmentService departmentService; // Needed to fetch department list
+    
+    
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "hospital/admin-index";
+        // or "admin-dashboard" — use the HTML file you already have
+    }
 
     @GetMapping("/manage-doctors")
     public String showDoctorsList(Model model) {

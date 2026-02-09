@@ -1,27 +1,83 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>My Profile</title>
-  <link href="https://cdn.jsdelivr.net" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <title>Patient Profile | HMS</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
+        .main-wrapper { display: flex; justify-content: center; padding: 50px 20px; }
+        
+        /* The "Medical Folder" Container - limited width to prevent stretching */
+        .medical-file { width: 100%; max-width: 750px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e2e8f0; }
+        
+        /* Hospital Identity Bar */
+        .file-header { background-color: #1e293b; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .hospital-brand { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; color: #5dade2; }
+        .file-id { font-size: 11px; color: #94a3b8; }
+
+        /* Patient Header */
+        .patient-banner { padding: 30px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; background: linear-gradient(to right, #ffffff, #f8fafc); }
+        .avatar-circle { width: 60px; height: 60px; background: #5dade2; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-right: 20px; }
+        .name-area h1 { margin: 0; font-size: 24px; color: #1e293b; letter-spacing: -0.5px; }
+        .verified-tag { font-size: 10px; font-weight: 800; color: #059669; background: #ecfdf5; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-top: 5px; }
+
+        /* Compact Data Grid */
+        .data-grid { padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .info-box { padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #edf2f7; }
+        .label { display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .value { font-size: 15px; color: #1e293b; font-weight: 600; }
+        
+        /* Highlight for Blood Group */
+        .blood-value { color: #dc2626; font-weight: 800; }
+
+        .footer-bar { padding: 20px 30px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back { text-decoration: none; color: #5dade2; font-size: 13px; font-weight: 700; transition: 0.2s; }
+        .btn-back:hover { color: #1e293b; }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container my-4" style="max-width:720px;">
-  <h3 class="mb-3">My Profile</h3>
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <p><strong>Name:</strong> <span th:text="${patient.name}">-</span></p>
-      
-      <!-- ✅ Age will now work because of the getter -->
-      <p><strong>Age:</strong> <span th:text="${patient.age}">-</span></p>
-      
-      <p><strong>Gender:</strong> <span th:text="${patient.gender}">-</span></p>
-      <!-- ✅ Mapped to contactNumber to match your Java model -->
-      <p><strong>Phone:</strong> <span th:text="${patient.contactNumber}">-</span></p>
-      
-      <p><strong>Email:</strong> <span th:text="${patient.email}">-</span></p>
-      <p><strong>Blood Group:</strong> <span th:text="${patient.bloodGroup}">-</span></p>
+<body>
+
+<div class="main-wrapper">
+    <div class="medical-file">
+        <div class="file-header">
+            <div class="hospital-brand">HMS GLOBAL PORTAL</div>
+            <div class="file-id">RECORD REF: #<span th:text="${patient.id}">001</span></div>
+        </div>
+
+        <div class="patient-banner">
+            <div class="avatar-circle">👤</div>
+            <div class="name-area">
+                <h1 th:text="${patient.name}">Patient Name</h1>
+                <span class="verified-tag">E-HEALTH RECORD ACTIVE</span>
+            </div>
+        </div>
+
+        <!-- 2-Column Grid keeps the page compact -->
+        <div class="data-grid">
+            <div class="info-box">
+                <span class="label">Age / Gender</span>
+                <span class="value" th:text="${patient.age + ' Years / ' + patient.gender}">-</span>
+            </div>
+            <div class="info-box">
+                <span class="label">Blood Group</span>
+                <span class="value blood-value" th:text="${patient.bloodGroup}">-</span>
+            </div>
+            <div class="info-box">
+                <span class="label">Primary Phone</span>
+                <span class="value" th:text="${patient.contactNumber}">-</span>
+            </div>
+            <div class="info-box">
+                <span class="label">Email Address</span>
+                <span class="value" th:text="${patient.email}">-</span>
+            </div>
+        </div>
+
+        <div class="footer-bar">
+            <a th:href="@{/redirect}" class="btn-back">← RETURN TO DASHBOARD</a>
+            <div style="font-size: 10px; color: #94a3b8; font-weight: 600;">CONFIDENTIAL DATA</div>
+        </div>
     </div>
-  </div>
- 
+</div>
+
 </body>
 </html>

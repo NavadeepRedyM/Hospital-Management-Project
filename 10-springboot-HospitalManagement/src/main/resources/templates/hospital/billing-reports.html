@@ -13,6 +13,13 @@
     </style>
 </head>
 <body>
+<!-- Styled Back Link - Matches Billing UI -->
+<a th:href="@{/admin/dashboard}" 
+   style="text-decoration: none; color: #2c3e50; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 15px; transition: color 0.2s;">
+   <span style="background: #2c3e50; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;">←</span> 
+   Back to Admin Dashboard
+</a>
+
     <h2>Hospital Billing Records</h2>
     <table>
         <thead>
@@ -47,5 +54,7 @@
             </tr>
         </tbody>
     </table>
+   
+</div>
 </body>
 </html>

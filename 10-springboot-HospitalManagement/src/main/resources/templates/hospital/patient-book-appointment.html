@@ -1,95 +1,113 @@
-	<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Appointment | Hospital Management</title>
-    <!-- Using a reliable Bootstrap CDN link -->
-    <link href="https://cdn.jsdelivr.net" rel="stylesheet">
-    <!-- Font Awesome for better UI -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
+    <title>Medical Booking | HMS</title>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
-        body { background-color: #f4f7fb; }
-        .card { border: none; border-radius: 12px; }
-        .form-label { font-weight: 600; color: #444; }
-        .btn-primary { background-color: #0077b6; border: none; }
-        .btn-primary:hover { background-color: #023e8a; }
-        .dept-hint { font-size: 0.85rem; color: #6c757d; font-style: italic; }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; color: #334155; }
+        .wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        
+        /* Different Approach: Side-Accent Card */
+        .container-card { 
+            width: 100%; max-width: 800px; background: #ffffff; border-radius: 16px; 
+            display: flex; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.07); border: 1px solid #e2e8f0; 
+        }
+
+        /* Left Side: Visual Info Bar */
+        .side-bar { 
+            width: 200px; background: #1e293b; padding: 40px 25px; color: #ffffff; 
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .side-bar h3 { font-size: 14px; color: #5dade2; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+        .side-bar p { font-size: 12px; opacity: 0.7; line-height: 1.6; margin-top: 20px; }
+
+        /* Right Side: Form Content */
+        .form-content { flex: 1; padding: 45px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .full { grid-column: span 2; }
+
+        .group { margin-bottom: 5px; }
+        label { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; }
+        
+        .input-field { 
+            width: 100%; padding: 12px; border: 1.5px solid #f1f5f9; border-radius: 8px; 
+            background: #f8fafc; font-size: 14px; color: #1e293b; outline: none; transition: all 0.3s;
+        }
+        .input-field:focus { border-color: #5dade2; background: #ffffff; box-shadow: 0 0 0 4px rgba(93, 173, 226, 0.1); }
+
+        /* Action Row */
+        .action-row { margin-top: 35px; display: flex; align-items: center; justify-content: space-between; }
+        .btn-submit { 
+            background: #5dade2; color: #ffffff; border: none; padding: 12px 30px; 
+            border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit:hover { background: #3498db; transform: translateY(-1px); }
+        .btn-back { text-decoration: none; font-size: 13px; font-weight: 600; color: #64748b; }
+        .btn-back:hover { color: #1e293b; }
     </style>
 </head>
 <body>
 
-<div class="container my-5" style="max-width: 720px;">
-    <div class="d-flex align-items-center mb-4">
-        <i class="fas fa-calendar-check fa-2x text-primary me-3"></i>
-        <h3 class="mb-0">Schedule New Appointment</h3>
-    </div>
+<div class="wrapper">
+    <div class="container-card">
+        <!-- Left Side Info -->
+        <div class="side-bar">
+            <div>
+                <h3>Booking</h3>
+                <p>Please select your department and preferred time. Our specialists are ready to assist you.</p>
+            </div>
+            <div style="font-size: 10px; color: #5dade2; font-weight: bold;">SECURE PORTAL v2.0</div>
+        </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
-            <!-- Ensure your Controller has a @ModelAttribute("form") -->
+        <!-- Form Content -->
+        <div class="form-content">
             <form th:action="@{/patient/book-appointment}" th:object="${form}" method="post">
-                
-                <!-- Patient Context (passed from controller) -->
                 <input type="hidden" name="patientId" th:value="${patient.id}" />
 
-                <!-- 1. Department Selection (Fee is linked here) -->
-                <div class="mb-4">
-                    <label class="form-label"><i class="fas fa-hospital me-2"></i>Select Department</label>
-                    <select class="form-select" th:field="*{departmentId}" required id="deptSelect">
-                        <option value="" selected disabled>-- Choose Medical Department --</option>
-                        <option th:each="dept : ${departments}" 
-                                th:value="${dept.id}" 
-                                th:text="${dept.deptName}"></option>
-                    </select>
-                    <span class="dept-hint mt-2 d-block">* Note: Consultation fees vary by department.</span>
-                </div>
-
-                <!-- 2. Date and Time -->
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label"><i class="fas fa-calendar-day me-2"></i>Preferred Date</label>
-                        <!-- Setting min date to today using JS or static value -->
-                        <input type="date" class="form-control" th:field="*{date}" required />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label"><i class="fas fa-clock me-2"></i>Time Slot</label>
-                        <select class="form-select" th:field="*{time}" required>
-                            <option value="" selected disabled>-- Select Hour --</option>
-                            <option value="09:00">09:00 AM</option>
-                            <option value="10:00">10:00 AM</option>
-                            <option value="11:00">11:00 AM</option>
-                            <option value="14:00">02:00 PM</option>
-                            <option value="16:00">04:00 PM</option>
+                <div class="form-grid">
+                    <!-- Row 1 -->
+                    <div class="group">
+                        <label>Specialization</label>
+                        <select class="input-field" th:field="*{departmentId}" required>
+                            <option value="" selected disabled>Select Dept</option>
+                            <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.deptName}"></option>
                         </select>
                     </div>
+                    <div class="group">
+                        <label>Payment Method</label>
+                        <select class="input-field" name="paymentMethod" required>
+                            <option value="UPI">Digital (UPI)</option>
+                            <option value="CARD">Card</option>
+                            <option value="CASH">At Counter</option>
+                        </select>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="group">
+                        <label>Visit Date</label>
+                        <input type="date" class="input-field" th:field="*{date}" required id="dtField" />
+                    </div>
+                    <div class="group">
+                        <label>Visit Time</label>
+                        <select class="input-field" th:field="*{time}" required>
+                            <option value="" selected disabled>Select Slot</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="14:00">02:00 PM</option>
+                        </select>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="group full">
+                        <label>Clinical Reason / Symptoms</label>
+                        <textarea class="input-field" th:field="*{reason}" rows="2" required placeholder="Type briefly..."></textarea>
+                    </div>
                 </div>
 
-                <!-- 3. Medical Reason -->
-                <div class="mb-4">
-                    <label class="form-label"><i class="fas fa-stethoscope me-2"></i>Reason for Visit</label>
-                    <textarea class="form-control" th:field="*{reason}" rows="3" 
-                              required placeholder="Briefly describe your symptoms or reason for visit..."></textarea>
-                </div>
-
-                <!-- 4. Payment Preference (Pre-confirmation) -->
-                <div class="mb-4">
-                    <label class="form-label"><i class="fas fa-wallet me-2"></i>Payment Preference</label>
-                    <select class="form-select" name="paymentMethod" required>
-                        <option value="UPI">UPI / QR Code</option>
-                        <option value="CREDIT_CARD">Credit Card</option>
-                        <option value="DEBIT_CARD">Debit Card</option>
-                        <option value="CASH">Pay at Reception (Cash)</option>
-                    </select>
-                </div>
-
-                <div class="d-flex gap-3 mt-4">
-                    <button class="btn btn-primary px-4 py-2" type="submit">
-                        <i class="fas fa-check-circle me-1"></i> Confirm Booking
-                    </button>
-                    <a class="btn btn-outline-secondary px-4 py-2" th:href="@{/patient/appointments}">
-                        Cancel
-                    </a>
+                <div class="action-row">
+                    <a th:href="@{/redirect}" class="btn-back">← Back to Dashboard</a>
+                    <button type="submit" class="btn-submit">Confirm Appointment</button>
                 </div>
             </form>
         </div>
@@ -97,11 +115,8 @@
 </div>
 
 <script>
-    // Optional: Prevent selecting past dates
-    document.addEventListener('DOMContentLoaded', function() {
-        var today = new Date().toISOString().split('T')[0];
-        document.getElementsByName('date')[0].setAttribute('min', today);
-    });
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('dtField').setAttribute('min', today);
 </script>
 
 </body>

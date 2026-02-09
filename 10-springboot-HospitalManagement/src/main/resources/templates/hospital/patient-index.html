@@ -33,19 +33,26 @@
     </div>
 
     <div class="main-content">
-        <div class="header-card">
-            <!-- 🔹 One-line fix: show the logged in patient's name -->
-            <!-- Replace the old <h1> line with this one -->
-<h1>Welcome <span th:text="${patient != null ? patient.name : 'user'}">user</span></h1>
+    <!-- Welcome Section -->
+    <div class="header-card" style="background: linear-gradient(135deg, #ffffff, #f9fafb); border-left: 5px solid #5dade2;">
+        <h1 style="margin: 0; color: #2c3e50;">Welcome, <span th:text="${patient != null ? patient.name : 'User'}" style="color: #5dade2;">User</span></h1>
+        <p style="color: #7f8c8d; margin-top: 5px;">Here you can manage your appointments, records and bills.</p>
+    </div>
 
-            <p>Here you can manage your appointments, records and bills.</p>
+    <!-- Account Overview Section -->
+    <div class="header-card">
+        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="width: 10px; height: 10px; background-color: #5dade2; border-radius: 50%; margin-right: 10px;"></div>
+            <h2 style="margin: 0; font-size: 1.5rem; color: #2c3e50;">Account Overview</h2>
         </div>
-
-        <div class="header-card">
-            <h2>Account Overview</h2>
-            <p>Summary of recent activity and upcoming appointments.</p>
+        <p style="color: #666; line-height: 1.6; margin: 0;">Summary of recent activity and upcoming appointments.</p>
+        
+        <!-- UI Visualizer for Activity (Placeholder) -->
+        <div style="margin-top: 25px; padding: 20px; border: 1px dashed #cbd5e0; border-radius: 8px; text-align: center; color: #a0aec0;">
+            <p style="margin: 0;">No recent activity to display.</p>
         </div>
     </div>
+</div>
 
 </body>
 </html>
