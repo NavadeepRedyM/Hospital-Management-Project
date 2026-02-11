@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Diagnosis</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7fb; padding: 40px; }
+        .form-card { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        /* Style for read-only fields to indicate they are auto-updated */
+        input[readonly] { background-color: #e9ecef; cursor: not-allowed; }
+        button { margin-top: 20px; width: 100%; border: none; cursor: pointer; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <h2><i class="fas fa-notes-medical"></i> Add New Diagnosis</h2>
+    <form th:action="@{/doctor/save-diagnosis}" th:object="${medicalRecord}" method="post">
+    
+        <label>Appointment ID:</label>
+        <!-- Added min="1" to prevent negative IDs and a JS listener -->
+        <input type="number" id="appointmentId" th:field="*{appointment.id}" 
+               placeholder="Enter Appointment ID" min="1" required 
+               oninput="updatePatientId(this.value)"/>
+      <label>Patient ID:</label>
+<!-- Use readonly so the value is included in the POST request -->
+<input type="number" id="patientId" th:field="*{patient.id}" 
+       min="1" required />
+
+        <!-- Inside doctor-add-diagnosis.html -->
+<label>Symptoms:</label>
+<textarea th:field="*{symptoms}" placeholder="Enter patient symptoms..." required></textarea>
+        
+        <label>Diagnosis:</label>
+        <textarea th:field="*{diagnosis}" rows="3" placeholder="Describe the medical condition..." required></textarea>
+        
+        <label>Treatment Plan:</label>
+        <textarea th:field="*{treatmentPlan}" rows="3" placeholder="Prescriptions or next steps..." required></textarea>
+        
+        <button type="submit" style="background-color: #0077b6; color: white; padding: 12px; font-weight: bold;">
+            Save to Medical History
+        </button>
+        <a th:href="@{/doctor/today-appointments}" style="display: block; text-align: center; margin-top: 10px; color: #666; text-decoration: none;">Cancel</a>
+    </form>
+</div>
+
+</body>
+</html>

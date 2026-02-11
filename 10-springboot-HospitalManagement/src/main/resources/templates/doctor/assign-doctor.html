@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Specialist | Admin Panel</title>
+    <style>
+        :root {
+            --medical-blue: #0284c7;
+            --medical-light: #f0f9ff;
+            --slate-700: #334155;
+            --slate-400: #94a3b8;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --success: #10b981;
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--slate-700);
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .assign-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 550px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--medical-blue);
+            padding: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .card-header h2 { margin: 0; font-size: 22px; font-weight: 700; }
+        .card-header p { margin: 8px 0 0; opacity: 0.9; font-size: 14px; }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 25px 30px;
+            background: var(--medical-light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-tile { display: flex; flex-direction: column; }
+        .info-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--slate-400); margin-bottom: 4px; }
+        .info-value { font-size: 15px; font-weight: 600; color: var(--slate-700); }
+
+        .dept-badge {
+            display: inline-block;
+            background: var(--medical-blue);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        form { padding: 30px; }
+
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--slate-700); }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .form-select:focus { outline: none; border-color: var(--medical-blue); }
+
+        .btn-confirm {
+            background-color: var(--success);
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn-confirm:hover { opacity: 0.9; }
+        .btn-confirm:active { transform: scale(0.98); }
+
+        .btn-cancel {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: var(--slate-400);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-cancel:hover { color: var(--slate-700); }
+    </style>
+</head>
+<body>
+
+<div class="assign-card">
+    <div class="card-header">
+        <h2>Doctor Assignment</h2>
+        <p>Finalize scheduling for the appointment</p>
+    </div>
+
+    <!-- Summary Section for Context -->
+    <div class="info-grid">
+        <div class="info-tile">
+            <span class="info-label">Patient</span>
+            <span class="info-value" th:text="${appointment.patient?.name}">Patient Name</span>
+        </div>
+        <div class="info-tile">
+            <span class="info-label">Specialty Required</span>
+            <span class="dept-badge" th:text="${deptName}">Department</span>
+        </div>
+        <div class="info-tile full-width" style="grid-column: span 2; margin-top: 10px;">
+            <span class="info-label">Appointment Date</span>
+            <span class="info-value" th:text="${appointment.appointmentDate}">2025-02-15</span>
+        </div>
+    </div>
+
+    <!-- Assignment Form -->
+    <form th:action="@{/appointments/save-assignment}" method="post">
+        <input type="hidden" name="appointmentId" th:value="${appointment.id}" />
+        
+        <div class="form-group">
+            <label class="form-label">Choose Available Specialist</label>
+            <select name="doctorId" class="form-select" required>
+                <option value="" selected disabled>Select an on-duty doctor...</option>
+                <option th:each="doc : ${doctors}" 
+                        th:value="${doc.id}" 
+                        th:text="${'Dr. ' + doc.name + ' — ' + doc.qualification}"></option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-confirm">Finalize Appointment</button>
+        <a th:href="@{/appointments}" class="btn-cancel">Cancel and Return</a>
+    </form>
+</div>
+
+</body>
+</html>

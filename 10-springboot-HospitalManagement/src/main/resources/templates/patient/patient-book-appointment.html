@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Booking | HMS</title>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; color: #334155; }
+        .wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        
+        /* Different Approach: Side-Accent Card */
+        .container-card { 
+            width: 100%; max-width: 800px; background: #ffffff; border-radius: 16px; 
+            display: flex; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.07); border: 1px solid #e2e8f0; 
+        }
+
+        /* Left Side: Visual Info Bar */
+        .side-bar { 
+            width: 200px; background: #1e293b; padding: 40px 25px; color: #ffffff; 
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .side-bar h3 { font-size: 14px; color: #5dade2; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+        .side-bar p { font-size: 12px; opacity: 0.7; line-height: 1.6; margin-top: 20px; }
+
+        /* Right Side: Form Content */
+        .form-content { flex: 1; padding: 45px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .full { grid-column: span 2; }
+
+        .group { margin-bottom: 5px; }
+        label { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; }
+        
+        .input-field { 
+            width: 100%; padding: 12px; border: 1.5px solid #f1f5f9; border-radius: 8px; 
+            background: #f8fafc; font-size: 14px; color: #1e293b; outline: none; transition: all 0.3s;
+        }
+        .input-field:focus { border-color: #5dade2; background: #ffffff; box-shadow: 0 0 0 4px rgba(93, 173, 226, 0.1); }
+
+        /* Action Row */
+        .action-row { margin-top: 35px; display: flex; align-items: center; justify-content: space-between; }
+        .btn-submit { 
+            background: #5dade2; color: #ffffff; border: none; padding: 12px 30px; 
+            border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit:hover { background: #3498db; transform: translateY(-1px); }
+        .btn-back { text-decoration: none; font-size: 13px; font-weight: 600; color: #64748b; }
+        .btn-back:hover { color: #1e293b; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="container-card">
+        <!-- Left Side Info -->
+        <div class="side-bar">
+            <div>
+                <h3>Booking</h3>
+                <p>Please select your department and preferred time. Our specialists are ready to assist you.</p>
+            </div>
+            <div style="font-size: 10px; color: #5dade2; font-weight: bold;">SECURE PORTAL v2.0</div>
+        </div>
+
+        <!-- Form Content -->
+        <div class="form-content">
+            <form th:action="@{/patient/book-appointment}" th:object="${form}" method="post">
+                <input type="hidden" name="patientId" th:value="${patient.id}" />
+
+                <div class="form-grid">
+                    <!-- Row 1 -->
+                    <div class="group">
+                        <label>Specialization</label>
+                        <select class="input-field" th:field="*{departmentId}" required>
+                            <option value="" selected disabled>Select Dept</option>
+                            <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.deptName}"></option>
+                        </select>
+                    </div>
+                    <div class="group">
+                        <label>Payment Method</label>
+                        <select class="input-field" name="paymentMethod" required>
+                            <option value="UPI">Digital (UPI)</option>
+                            <option value="CARD">Card</option>
+                            <option value="CASH">At Counter</option>
+                        </select>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="group">
+                        <label>Visit Date</label>
+                        <input type="date" class="input-field" th:field="*{date}" required id="dtField" />
+                    </div>
+                    <div class="group">
+                        <label>Visit Time</label>
+                        <select class="input-field" th:field="*{time}" required>
+                            <option value="" selected disabled>Select Slot</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="14:00">02:00 PM</option>
+                        </select>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="group full">
+                        <label>Clinical Reason / Symptoms</label>
+                        <textarea class="input-field" th:field="*{reason}" rows="2" required placeholder="Type briefly..."></textarea>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <a th:href="@{/redirect}" class="btn-back">← Back to Dashboard</a>
+                    <button type="submit" class="btn-submit">Confirm Appointment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('dtField').setAttribute('min', today);
+</script>
+
+</body>
+</html>

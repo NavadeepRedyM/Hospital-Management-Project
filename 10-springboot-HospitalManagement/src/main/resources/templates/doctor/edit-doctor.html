@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Doctor - Hospital Admin</title>
+    <style>
+        :root {
+            --primary: #2563eb; --bg: #f8fafc; --border: #e2e8f0; --text: #1e293b;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0;
+        }
+        .card {
+            background: white; width: 100%; max-width: 500px;
+            padding: 30px; border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+        h2 { color: var(--text); margin-bottom: 25px; text-align: center; font-size: 22px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; color: #475569; }
+        input {
+            width: 100%; padding: 10px; border: 1px solid var(--border);
+            border-radius: 6px; box-sizing: border-box; font-size: 14px;
+        }
+        input:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+        input:disabled { background: #f1f5f9; color: #64748b; border-style: dashed; cursor: not-allowed; }
+        .help-text { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+        .error { color: #ef4444; font-size: 12px; margin-top: 4px; }
+        .btn-box { display: flex; gap: 10px; margin-top: 25px; }
+        .btn {
+            flex: 1; padding: 12px; border-radius: 6px; font-weight: bold;
+            text-align: center; text-decoration: none; border: none; cursor: pointer;
+        }
+        .btn-edit { background: var(--primary); color: white; }
+        .btn-cancel { background: #f1f5f9; color: var(--text); border: 1px solid var(--border); }
+        .btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Edit Doctor Details</h2>
+    <form th:action="@{/admin/update}" th:object="${doctor}" method="post">
+    <input type="hidden" name="_method" value="PUT" />
+        
+        <!-- CRITICAL: Hidden fields with Null-Checks to prevent crashing -->
+        <input type="hidden" th:field="*{id}" />
+        
+        <!-- Only process user fields if user object exists in DB -->
+        <th:block th:if="*{user != null}">
+            <input type="hidden" th:field="*{user.id}" /> 
+            <input type="hidden" th:field="*{user.username}" />
+            <input type="hidden" th:field="*{user.password}" />
+            <input type="hidden" th:field="*{user.role}" />
+        </th:block>
+        
+        <!-- Only process department if it exists -->
+        <th:block th:if="*{department != null}">
+            <input type="hidden" th:field="*{department.id}" />
+        </th:block>
+
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" th:field="*{name}" required />
+            <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+        </div>
+        
+        <div class="form-group">
+            <label>Qualification</label>
+            <input type="text" th:field="*{qualification}" />
+            <span class="error" th:if="${#fields.hasErrors('qualification')}" th:errors="*{qualification}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Experience (Years)</label>
+            <input type="number" th:field="*{yearsOfExperience}" />
+            <span class="error" th:if="${#fields.hasErrors('yearsOfExperience')}" th:errors="*{yearsOfExperience}"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Current Dept. Fee</label>
+            <!-- Displaying as text for info -->
+            <input type="text" th:value="${doctor.consultationFee}" disabled />
+            <div class="help-text">To change this fee, update the Department settings.</div>
+        </div>
+        
+        <div class="btn-box">
+            <button type="submit" class="btn btn-edit">Update Records</button>
+            <a th:href="@{/admin/manage-doctors}" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

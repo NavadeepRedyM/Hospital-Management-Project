@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical History</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f4f7fb; }
+        .search-container { margin-bottom: 25px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .search-input { flex-grow: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
+        .btn-search { padding: 12px 25px; background: #0077b6; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        .header-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 4px solid #0077b6; }
+        .patient-info { color: #0056b3; font-weight: bold; margin-bottom: 10px; display: block; }
+    </style>
+</head>
+<body>
+<!-- Return to Doctor Panel (LEFT, OUTSIDE TABLE) -->
+<div style="margin-bottom: 15px;">
+<a th:href="@{/doctor/dashboard}"
+          style="
+              display: inline-block;
+              padding: 8px 14px;
+              background: #6c757d;
+              color: white;
+              text-decoration: none;
+              border-radius: 4px;
+          ">
+           ← Return to Doctor Panel
+</a>
+</div>
+
+<h2>Patient Medical History</h2>
+
+<!-- ✅ Updated Search Bar: Now a Server-Side Form -->
+<div class="search-container">
+    <form th:action="@{/doctor/records}" method="get" style="display: flex; gap: 10px;">
+        <input type="text" name="search" th:value="${searchKeyword}" 
+               placeholder="Search by Patient ID or Name..." class="search-input">
+        <button type="submit" class="btn-search">Search</button>
+        <a th:href="@{/doctor/records}" style="padding: 12px; text-decoration: none; color: #666;">Clear</a>
+    </form>
+</div>
+
+<div id="recordsContainer">
+    <div class="header-card" th:each="record : ${records}">
+        <span class="patient-info">
+            Patient ID: <span th:text="${record.patient?.id}"></span> | 
+            Name: <span th:text="${record.patient?.name}"></span>
+        </span>
+        
+        <p><strong>Date:</strong> 
+           <span th:text="${record.recordDate != null ? #temporals.format(record.recordDate, 'dd-MM-yyyy') : 'N/A'}"></span>
+        </p>
+        
+        <p><strong>Symptoms:</strong> <span th:text="${record.symptoms}"></span></p>
+        <p><strong>Diagnosis:</strong> <span th:text="${record.diagnosis}"></span></p>
+        <p><strong>Treatment:</strong> <span th:text="${record.treatmentPlan}"></span></p>
+    </div>
+</div>
+
+<!-- Shown if list is empty -->
+<div th:if="${#lists.isEmpty(records)}" style="text-align:center; color: #888; margin-top: 50px;">
+    <p>No records found matching your search.</p>
+</div>
+
+</body>
+</html>

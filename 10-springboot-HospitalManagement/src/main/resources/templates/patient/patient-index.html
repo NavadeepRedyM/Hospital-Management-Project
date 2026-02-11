@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #eef2f7; margin: 0; padding: 0; display: flex; }
+        .sidebar { width: 250px; background-color: #2c3e50; color: white; height: 100vh; padding: 20px; box-sizing: border-box; }
+        .main-content { flex-grow: 1; padding: 20px; }
+        .header-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .sidebar h4 { color: #5dade2; margin-bottom: 15px; }
+        .nav-link { display: block; color: #a0aec0; padding: 10px 0; text-decoration: none; border-bottom: 1px solid #3d566e; }
+        .nav-link:hover { color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h4>Patient Panel</h4>
+
+        <a th:href="@{/patient/profile}" class="nav-link">My Profile</a>
+        <a th:href="@{/patient/book-appointment}" class="nav-link">Book Appointment</a>
+        <a th:href="@{/patient/appointments}" class="nav-link">My Appointments</a>
+        <a th:href="@{/patient/records}" class="nav-link">Medical Records</a>
+        <a th:href="@{/patient/bills}" class="nav-link">My Bills</a>
+
+        <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
+            <button type="submit" style="background: none; border: none; color: #a0aec0; cursor: pointer; padding: 0; font: inherit; text-decoration: underline;">
+                Logout
+            </button>
+        </form>
+    </div>
+
+    <div class="main-content">
+    <!-- Welcome Section -->
+    <div class="header-card" style="background: linear-gradient(135deg, #ffffff, #f9fafb); border-left: 5px solid #5dade2;">
+        <h1 style="margin: 0; color: #2c3e50;">Welcome, <span th:text="${patient != null ? patient.name : 'User'}" style="color: #5dade2;">User</span></h1>
+        <p style="color: #7f8c8d; margin-top: 5px;">Here you can manage your appointments, records and bills.</p>
+    </div>
+
+    <!-- Account Overview Section -->
+    <div class="header-card">
+        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div style="width: 10px; height: 10px; background-color: #5dade2; border-radius: 50%; margin-right: 10px;"></div>
+            <h2 style="margin: 0; font-size: 1.5rem; color: #2c3e50;">Account Overview</h2>
+        </div>
+        <p style="color: #666; line-height: 1.6; margin: 0;">Summary of recent activity and upcoming appointments.</p>
+        
+        <!-- UI Visualizer for Activity (Placeholder) -->
+        <div style="margin-top: 25px; padding: 20px; border: 1px dashed #cbd5e0; border-radius: 8px; text-align: center; color: #a0aec0;">
+            <p style="margin: 0;">No recent activity to display.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

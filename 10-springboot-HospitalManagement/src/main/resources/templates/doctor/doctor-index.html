@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Dashboard</title>
+    
+    <style>
+        /* CSS styles remain the same for consistent hospital theme */
+        body { font-family: Arial, sans-serif; background-color: #eef2f7; margin: 0; padding: 0; display: flex; }
+        .sidebar { width: 250px; background-color: #2c3e50; color: white; height: 100vh; padding: 20px; box-sizing: border-box; }
+        .main-content { flex-grow: 1; padding: 20px; }
+        .header-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 5px; }
+        .sidebar h4 { color: #5dade2; margin-bottom: 15px; }
+        .nav-link { display: block; color: #a0aec0; padding: 10px 0; text-decoration: none; border-bottom: 1px solid #3d566e; }
+        .nav-link:hover { color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h4>Doctor Panel</h4>
+        <!-- Use th:href="@{/doctor/...}" for all doctor links -->
+        <a th:href="@{/doctor/profile}" class="nav-link">My Profile</a>
+        <a th:href="@{/doctor/today-appointments}" class="nav-link">Today's Appointments</a>
+        <a th:href="@{/doctor/records}" class="nav-link">Patient Medical Records</a>
+        <a th:href="@{/doctor/add-diagnosis}" class="nav-link">Add Diagnosis</a>
+        
+        <!-- Thymeleaf Form for Logout -->
+        <form th:action="@{/logout}" method="post" style="margin-top: 20px;">
+            <button type="submit" style="background: none; border: none; color: #a0aec0; cursor: pointer; padding: 0; font: inherit; text-decoration: underline;">
+                Logout
+            </button>
+        </form>
+    </div>
+
+  <div class="main-content" style="flex-grow: 1; padding: 45px; background-color: #f8fafc; min-height: 100vh;">
+
+    <!-- 1. Minimalist Welcome Header -->
+    <div style="background: #ffffff; padding: 45px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border-left: 8px solid #5dade2; margin-bottom: 30px; position: relative;">
+        <!-- Top Status Indicator -->
+        <div style="position: absolute; top: 20px; right: 30px; font-size: 10px; font-weight: 800; color: #cbd5e1; letter-spacing: 1.5px; text-transform: uppercase;">
+            Clinical Portal Active
+        </div>
+        
+        <h1 style="margin: 0; font-size: 32px; color: #1e293b; font-weight: 800; letter-spacing: -0.5px;">
+            Welcome, <span th:text="${doctor.name}" style="color: #3498db;">Doctor</span>
+        </h1>
+        <p style="margin-top: 10px; color: #64748b; font-size: 16px; font-weight: 500; line-height: 1.5;">
+            View appointments and update patient treatment plans.
+        </p>
+    </div>
+
+    <!-- 2. Structured Overview Section -->
+    <div style="background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #edf2f7; overflow: hidden;">
+        
+        <!-- Section Header Strip -->
+        <div style="background-color: #fcfdfe; padding: 20px 45px; border-bottom: 1px solid #edf2f7; display: flex; align-items: center;">
+            <div style="width: 8px; height: 8px; background-color: #2ecc71; border-radius: 50%; margin-right: 12px;"></div>
+            <h2 style="margin: 0; font-size: 18px; color: #334155; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                Patient List Overview
+            </h2>
+        </div>
+
+        <!-- Section Body -->
+        <div style="padding: 45px;">
+            <p style="margin: 0; color: #475569; font-size: 16px; line-height: 1.8; max-width: 700px;">
+                List of all patients assigned to you. Access medical records, review history, and manage diagnostic updates in real-time.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Profile | HMS Core</title>
+    <!-- Standard clinical font -->
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #334155; }
+        .viewport { display: flex; justify-content: center; padding: 50px 20px; }
+        
+        /* Master Record Sheet */
+        .credential-file { width: 100%; max-width: 800px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #d1d9e0; overflow: hidden; }
+
+        /* Top Identity Strip */
+        .brand-header { background: #1e293b; color: #ffffff; padding: 12px 35px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #5dade2; }
+        .hospital-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #5dade2; }
+        .file-id { font-size: 10px; color: #94a3b8; }
+
+        /* Practitioner ID Header */
+        .id-section { padding: 35px 40px; border-bottom: 1px solid #f1f5f9; background-color: #fcfdfe; }
+        .id-section h1 { margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; }
+        .clinical-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 800; margin-top: 10px; letter-spacing: 0.5px; }
+
+        /* Data Grid Layout */
+        .data-body { padding: 40px; }
+        .grid-row { display: flex; border-bottom: 1px solid #f8fafc; padding-bottom: 15px; margin-bottom: 15px; }
+        .grid-row:last-child { border-bottom: none; }
+        
+        .label { width: 35%; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .value { width: 65%; font-size: 15px; font-weight: 600; color: #1e293b; }
+        .currency { color: #059669; font-weight: 800; font-family: 'Courier New', monospace; }
+
+        /* Footer Actions */
+        .file-footer { padding: 20px 40px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .btn-panel { text-decoration: none; font-size: 13px; font-weight: 700; color: #5dade2; border-bottom: 2px solid transparent; }
+        .btn-panel:hover { border-bottom-color: #5dade2; }
+    </style>
+</head>
+<body>
+
+<div class="viewport">
+    <div class="credential-file">
+        <!-- Official Bar -->
+        <div class="brand-header">
+            <span class="hospital-tag">HOSPITAL MANAGEMENT SYSTEM</span>
+            <span class="file-id">STAFF REF: <span th:text="${doctor.id}">-</span></span>
+        </div>
+
+        <!-- Practitioner Header -->
+        <div class="id-section">
+            <h1 th:text="${'Dr. ' + doctor.name}">Dr. John Doe</h1>
+            <div class="clinical-badge">CERTIFIED MEDICAL PRACTITIONER</div>
+        </div>
+
+        <!-- Professional Data -->
+        <div class="data-body">
+            <div class="grid-row">
+                <span class="label">Qualifications</span>
+                <span class="value" th:text="${doctor.qualification}">MD, MBBS</span>
+            </div>
+            
+            <div class="grid-row">
+                <span class="label">Medical Department</span>
+                <span class="value" th:text="${doctor.department?.deptName}">Cardiology</span>
+            </div>
+
+            <div class="grid-row">
+                <span class="label">Years of Experience</span>
+                <span class="value" th:text="${doctor.yearsOfExperience} + ' Years'">-</span>
+            </div>
+
+            <div class="grid-row">
+                <span class="label">Consultation Fee</span>
+                <span class="value currency" th:text="${'₹ ' + doctor.consultationFee}">₹ 0.0</span>
+            </div>
+            
+            <div class="grid-row">
+                <span class="label">License Status</span>
+                <span class="value">Verified & Active (EHR v4.2)</span>
+            </div>
+        </div>
+
+        <!-- Navigation Footer -->
+        <div class="file-footer">
+            <a th:href="@{/doctor/dashboard}" class="btn-panel">
+                ← EXIT TO DOCTOR PANEL
+            </a>
+            <div style="font-size: 10px; color: #cbd5e1; font-weight: 700;">SYSTEM ENCRYPTED RECORD</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
