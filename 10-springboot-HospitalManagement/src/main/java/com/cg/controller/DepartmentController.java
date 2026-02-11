@@ -52,13 +52,13 @@ public class DepartmentController {
     public String showEditForm(@PathVariable Long id, Model model) {
         // Service returns DepartmentDTO
         model.addAttribute("department", departmentService.getDepartmentById(id));
-        return "department/add-department";
+        return "department/edit-department";
     }
     @PutMapping("/update")
     public String updateDepartment(@Valid @ModelAttribute("department") DepartmentDTO departmentDto, BindingResult result) {
         if (result.hasErrors()) {
             // Returns to the form to show validation errors
-            return "department/add-department";
+            return "department/edit-department";
         }
         
         if (departmentDto.getId() == null) {
