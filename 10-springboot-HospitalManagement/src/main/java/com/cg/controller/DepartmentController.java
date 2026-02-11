@@ -54,8 +54,25 @@ public class DepartmentController {
         model.addAttribute("department", departmentService.getDepartmentById(id));
         return "department/add-department";
     }
+    @PutMapping("/update")
+    public String updateDepartment(@Valid @ModelAttribute("department") DepartmentDTO departmentDto, BindingResult result) {
+        if (result.hasErrors()) {
+            // Returns to the form to show validation errors
+            return "department/add-department";
+        }
+        
+        if (departmentDto.getId() == null) {
+            // Match the service method name exactly
+            departmentService.addDepartment(departmentDto); 
+        } else {
+            departmentService.updateDepartment(departmentDto.getId(), departmentDto);
+        }
+        
+        return "redirect:/admin/departments";
+    }
 
-    @GetMapping("/delete/{id}")
+
+    @DeleteMapping("/delete/{id}")
     public String deleteDepartment(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             departmentService.deleteDepartment(id);
