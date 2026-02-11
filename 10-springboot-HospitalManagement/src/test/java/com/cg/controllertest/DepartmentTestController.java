@@ -58,7 +58,7 @@ public class DepartmentTestController {
 
         String view = departmentController.viewDepartments(model);
 
-        assertEquals("hospital/manage-department", view);
+        assertEquals("department/manage-department", view);
         assertEquals(list, model.getAttribute("departments"));
     }
 
@@ -96,7 +96,7 @@ public class DepartmentTestController {
 
         String view = departmentController.saveDepartment(mockDept, bindingResult);
 
-        assertEquals("hospital/add-department", view);
+        assertEquals("department/add-department", view);
         // Verify no save attempt was made
         verify(departmentService, never()).addDepartment(any());
     }
@@ -118,7 +118,7 @@ public class DepartmentTestController {
         List<com.cg.model.Doctor> doctorsInModel = (List<com.cg.model.Doctor>) model.getAttribute("doctors");
         
         assertEquals(1, doctorsInModel.size());
-        assertEquals("hospital/department-doctors", view);
+        assertEquals("department/department-doctors", view);
     }
       
     /**
@@ -133,7 +133,7 @@ public class DepartmentTestController {
         String view = departmentController.viewDepartments(model);
 
         // Assert
-        assertEquals("hospital/manage-department", view);
+        assertEquals("department/manage-department", view);
         List<DepartmentDTO> depts = (List<DepartmentDTO>) model.getAttribute("departments");
         assertTrue(depts.isEmpty());
     }
