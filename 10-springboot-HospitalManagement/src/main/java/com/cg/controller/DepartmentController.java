@@ -21,21 +21,21 @@ public class DepartmentController {
     public String viewDepartments(Model model) {
         // Service returns List<DepartmentDTO>
         model.addAttribute("departments", departmentService.getAllDepartments());
-        return "hospital/manage-department";
+        return "department/manage-department";
     }
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
         // Initialize DTO for the form
         model.addAttribute("department", new DepartmentDTO());
-        return "hospital/add-department";
+        return "department/add-department";
     }
 
     @PostMapping("/save")
     public String saveDepartment(@Valid @ModelAttribute("department") DepartmentDTO departmentDto, BindingResult result) {
         if (result.hasErrors()) {
             // Returns to the form to show validation errors
-            return "hospital/add-department";
+            return "department/add-department";
         }
         
         if (departmentDto.getId() == null) {
@@ -52,7 +52,7 @@ public class DepartmentController {
     public String showEditForm(@PathVariable Long id, Model model) {
         // Service returns DepartmentDTO
         model.addAttribute("department", departmentService.getDepartmentById(id));
-        return "hospital/add-department";
+        return "department/add-department";
     }
 
     @GetMapping("/delete/{id}")
@@ -78,7 +78,7 @@ public class DepartmentController {
 
        model.addAttribute("department", department);
        model.addAttribute("doctors", activeDoctors);
-       return "hospital/department-doctors";
+       return "department/department-doctors";
     }
 
 }
