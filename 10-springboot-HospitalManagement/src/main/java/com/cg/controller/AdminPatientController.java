@@ -31,7 +31,7 @@ public class AdminPatientController {
             ? patientService.findAll() 
             : patientService.search(q)); 
         model.addAttribute("q", q);
-        return "hospital/manage-patients";
+        return "patient/manage-patients";
     }
     @GetMapping("/add")
     public String addForm(Model model) {
@@ -41,13 +41,13 @@ public class AdminPatientController {
         List<String> incomplete = patientService.getIncompleteUsernames();
         model.addAttribute("usernames", incomplete);
         
-        return "hospital/add-patient";
+        return "patient/add-patient";
     }
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model) {
         // Matches your service method: findById()
         model.addAttribute("patient", patientService.findById(id));
-        return "hospital/edit-patient";
+        return "patient/edit-patient";
     }
 
     @PostMapping("/save")
@@ -65,7 +65,22 @@ public class AdminPatientController {
         patientService.save(patientDto);
         return "redirect:/admin/patients";
     }
-    @PostMapping("/delete/{id}")
+    @PutMapping("/update")
+    public String update( @Valid @ModelAttribute("patient") PatientDTO patientDto,
+                       BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            // ✅ Match the logic in addForm: use patientService to get incomplete records
+            model.addAttribute("usernames", patientService.getIncompleteUsernames());
+            
+            // If editing, the dropdown isn't usually needed, but this prevents crashes
+            return (patientDto.getId() == null) ? "hospital/add-patient" : "hospital/edit-patient";
+        }
+
+        patientService.save(patientDto);
+        return "redirect:/admin/patients";
+    }
+    @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         // Matches your service method: deleteById()
         patientService.deleteById(id);

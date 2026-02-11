@@ -33,18 +33,18 @@ public class DoctorController {
     @GetMapping("/dashboard")
     public String doctorDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("doctor", getCurrentDoctor(userDetails));
-        return "hospital/doctor-index";
+        return "doctor/doctor-index";
     }
     @GetMapping("/profile")
     public String viewProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("doctor", getCurrentDoctor(userDetails));
-        return "hospital/doctor-profile";
+        return "doctor/doctor-profile";
     }
 
     @GetMapping("/today-appointments")
     public String todayAppointments(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("doctor", getCurrentDoctor(userDetails));
-        return "hospital/doctor-appointments";
+        return "doctor/doctor-appointments";
     }
 
     @GetMapping("/records")
@@ -56,7 +56,7 @@ public class DoctorController {
         List<MedicalRecord> records = medicalRecordService.searchByDoctorAndKeyword(doctor.getId(), search);
         model.addAttribute("records", records);
         model.addAttribute("searchKeyword", search);
-        return "hospital/doctor-records";
+        return "doctor/doctor-records";
     }
 
     /**
@@ -85,7 +85,7 @@ public class DoctorController {
         }
         
         model.addAttribute("medicalRecord", record);
-        return "hospital/doctor-add-diagnosis";
+        return "doctor/doctor-add-diagnosis";
     }
 
     @PostMapping("/save-diagnosis")

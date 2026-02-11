@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -34,7 +35,7 @@ public class AppointmentController {
                 "appointments",
                 appointmentService.getAllAppointments()
         );
-        return "hospital/view-appointments";
+        return "appointment/view-appointments";
     }
     
     @PostMapping("/save-assignment")
@@ -58,7 +59,7 @@ public class AppointmentController {
         model.addAttribute("appointment", appointment);
         model.addAttribute("deptName", appointment.getDepartment().getDeptName());
         model.addAttribute("doctors", activeDoctors);
-        return "hospital/assign-doctor";
+        return "doctor/assign-doctor";
     }
     @GetMapping("/reassign/{id}")
     public String showReassignForm(@PathVariable Long id, Model model) {
@@ -74,10 +75,10 @@ public class AppointmentController {
         model.addAttribute("appointment", appointment);
         model.addAttribute("deptName", appointment.getDepartment().getDeptName());
         model.addAttribute("doctors", sameDeptActiveDoctors);
-        return "hospital/reassign-appointment"; 
+        return "appointment/reassign-appointment"; 
     }
 
-    @PostMapping("/reassign")
+    @PutMapping("/reassign")
     public String processReassign(@RequestParam Long appointmentId, 
                                   @RequestParam Long doctorId, 
                                   RedirectAttributes ra) {
@@ -90,7 +91,7 @@ public class AppointmentController {
         }
         return "redirect:/appointments"; // Corrected redirect
     }
-    @PostMapping("/cancel/{id}")
+    @PutMapping("/cancel/{id}")
     public String cancelAppt(@PathVariable Long id, RedirectAttributes ra) {
         appointmentService.cancelAppointment(id);
         ra.addFlashAttribute("success", "Appointment marked as Cancelled.");

@@ -35,7 +35,7 @@ public class PatientController {
     public String patientDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         PatientDTO patient = getCurrentPatient(userDetails);
         model.addAttribute("patient", patient);
-        return "hospital/patient-index"; // This returns your patient-index.html
+        return "patient/patient-index"; // This returns your patient-index.html
     }
 
 
@@ -44,7 +44,7 @@ public class PatientController {
         PatientDTO patient = patientService.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
         model.addAttribute("patient", patient);
-        return "hospital/patient-profile";
+        return "patient/patient-profile";
     }
 
     @GetMapping("/appointments")
@@ -53,7 +53,7 @@ public class PatientController {
         List<AppointmentDTO> appointments = appointmentService.listForPatient(patient.getId());
         model.addAttribute("patient", patient);
         model.addAttribute("appointments", appointments);
-        return "hospital/patient-appointments";
+        return "patient/patient-appointments";
     }
 
     @GetMapping("/book-appointment")
@@ -63,7 +63,7 @@ public class PatientController {
         model.addAttribute("patient", patient);
         model.addAttribute("form", new BookAppointmentForm());
         model.addAttribute("departments", departments); 
-        return "hospital/patient-book-appointment";
+        return "patient/patient-book-appointment";
     }
 
     @PostMapping("/book-appointment")
@@ -99,7 +99,7 @@ public class PatientController {
 
         model.addAttribute("appointment", appt);
         model.addAttribute("payment", paymentDTO);
-        return "hospital/patient-payment";
+        return "patient/patient-payment";
     }
 
     @PostMapping("/confirm-payment")
@@ -118,7 +118,7 @@ public class PatientController {
         appointmentService.finalizeBookingWithPayment(paymentDto);
         AppointmentDTO finalAppt = appointmentService.getAppointmentById(paymentDto.getAppointmentId());
         model.addAttribute("appointment", finalAppt);
-        return "hospital/appointment-success"; 
+        return "appointment/appointment-success"; 
     }
     @GetMapping("/bills")
     public String viewMyBills(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -134,7 +134,7 @@ public class PatientController {
         model.addAttribute("bills", bills);
         
         // 4. Return the HTML file (ensure the path matches your templates folder)
-        return "hospital/patient-bills"; 
+        return "patient/patient-bills"; 
     }
     
     @GetMapping("/records")
@@ -149,7 +149,7 @@ public class PatientController {
         model.addAttribute("patient", patient);
         model.addAttribute("records", records);
         
-        return "hospital/patient-records"; 
+        return "patient/patient-records"; 
     }
     
     @GetMapping("/cancel-payment/{id}")

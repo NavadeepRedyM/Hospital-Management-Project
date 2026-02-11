@@ -36,9 +36,9 @@ public class LoginController {
             // FIX: Change 'Doctor' entity to 'DoctorDTO'
             com.cg.dto.DoctorDTO doctor = doctorservice.getDoctorByUsername(username); 
             model.addAttribute("doctor", doctor); 
-            return "hospital/doctor-index";
+            return "doctor/doctor-index";
         } else if (roles.contains("ROLE_PATIENT")) {
-            return "hospital/patient-index"; 
+            return "patient/patient-index"; 
         }
         return "redirect:/login?error";
     }

@@ -65,7 +65,7 @@ public class RegistrationController {
     // 2. DOCTOR ACCOUNT ACTIVATION
     @GetMapping("/register-doctor")
     public String showDoctorRegistration() {
-        return "hospital/register-doctor";
+        return "doctor/register-doctor";
     }
     
     @PostMapping("/doctor-registration")
@@ -78,7 +78,7 @@ public class RegistrationController {
 
         if (doctorDto == null) {
             model.addAttribute("error", "Username not assigned to any doctor profile.");
-            return "hospital/register-doctor";
+            return "doctor/register-doctor";
         }
 
         // 2. MANUAL VALIDATION for Doctor Password
@@ -86,7 +86,7 @@ public class RegistrationController {
         String passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
         if (!password.matches(passwordPattern)) {
             model.addAttribute("error", "Password is too weak! Must be 8+ chars, include Uppercase, Lowercase, Digit, and Special Character.");
-            return "hospital/register-doctor";
+            return "doctor/register-doctor";
         }
 
         User user = doctorDto.getUser(); 

@@ -41,7 +41,7 @@ public class AdminController {
     @GetMapping("/manage-doctors")
     public String showDoctorsList(Model model) {
         model.addAttribute("listOfDoctors", doctorService.findAllDoctors());
-        return "hospital/manage-doctors";
+        return "doctor/manage-doctors";
     }
 
     @GetMapping("/add-doctor")
@@ -53,7 +53,7 @@ public class AdminController {
         model.addAttribute("doctor", doctorDTO);
         // ✅ Add department list so the Admin can choose a dept (and its fee)
         model.addAttribute("departments", departmentService.getAllDepartments());
-        return "hospital/add-doctor";
+        return "doctor/add-doctor";
     }
 
     @PostMapping("/save-doctor")
@@ -61,7 +61,26 @@ public class AdminController {
         if (result.hasErrors()) {
             // ✅ Re-load departments if there is a validation error
             model.addAttribute("departments", departmentService.getAllDepartments());
-            return "hospital/add-doctor";
+            return "doctor/add-doctor";
+        }
+
+        if (doctorDto.getUser() != null) {
+            doctorDto.getUser().setRole("ROLE_DOCTOR");
+        }
+        
+        // Consultation fee is NOT set here anymore; it's pulled from the chosen Department
+        doctorDto.setMedicalRecords(null);
+        doctorDto.setAppointments(null);
+
+        doctorService.addDoctor(doctorDto); 
+        return "redirect:/admin/manage-doctors";
+    }
+    @PutMapping("/update")
+    public String updateDoctor(@Valid @ModelAttribute("doctor") DoctorDTO doctorDto, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            // ✅ Re-load departments if there is a validation error
+            model.addAttribute("departments", departmentService.getAllDepartments());
+            return "doctor/add-doctor";
         }
 
         if (doctorDto.getUser() != null) {
@@ -81,10 +100,10 @@ public class AdminController {
         DoctorDTO doctor = doctorService.findDoctorById(id);
         model.addAttribute("doctor", doctor);
         model.addAttribute("departments", departmentService.getAllDepartments());
-        return "hospital/edit-doctor";
+        return "doctor/edit-doctor";
     }
 
-    @PostMapping("/delete-doctor/{id}")
+    @DeleteMapping("/delete-doctor/{id}")
     public String deleteDoctor(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             doctorService.deleteDoctor(id);
@@ -106,7 +125,7 @@ public class AdminController {
             bills = billingService.getAllBillings();
         }
         model.addAttribute("bills", bills);
-        return "hospital/billing-reports"; 
+        return "billing/billing-reports"; 
     }
 
 
