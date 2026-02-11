@@ -71,7 +71,7 @@ public class PatientTestController {
         String viewName = patientController.patientDashboard(userDetails, model);
 
         // Assert
-        assertEquals("hospital/patient-index", viewName);
+        assertEquals("patient/patient-index", viewName);
         assertEquals(mockPatient, model.getAttribute("patient"));
         verify(patientService).findByUsername("testuser");
     }
@@ -101,7 +101,7 @@ public class PatientTestController {
         String viewName = patientController.viewProfile(userDetails, model);
 
         // Assert
-        assertEquals("hospital/patient-profile", viewName);
+        assertEquals("patient/patient-profile", viewName);
         assertEquals(mockPatient, model.getAttribute("patient"));
     }
     /**

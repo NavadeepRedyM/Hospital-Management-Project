@@ -21,21 +21,21 @@ public class DepartmentController {
     public String viewDepartments(Model model) {
         // Service returns List<DepartmentDTO>
         model.addAttribute("departments", departmentService.getAllDepartments());
-        return "department/manage-department";
+        return "hospital/manage-department";
     }
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
         // Initialize DTO for the form
         model.addAttribute("department", new DepartmentDTO());
-        return "department/add-department";
+        return "hospital/add-department";
     }
 
     @PostMapping("/save")
     public String saveDepartment(@Valid @ModelAttribute("department") DepartmentDTO departmentDto, BindingResult result) {
         if (result.hasErrors()) {
             // Returns to the form to show validation errors
-            return "department/add-department";
+            return "hospital/add-department";
         }
         
         if (departmentDto.getId() == null) {
@@ -47,31 +47,15 @@ public class DepartmentController {
         
         return "redirect:/admin/departments";
     }
-
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         // Service returns DepartmentDTO
         model.addAttribute("department", departmentService.getDepartmentById(id));
-        return "department/add-department";
+        return "hospital/add-department";
     }
-    @PutMapping("/update")
-    public String updateDepartment(@Valid @ModelAttribute("department") DepartmentDTO departmentDto, BindingResult result) {
-        if (result.hasErrors()) {
-            // Returns to the form to show validation errors
-            return "department/add-department";
-        }
-        
-        if (departmentDto.getId() == null) {
-            // Match the service method name exactly
-            departmentService.addDepartment(departmentDto); 
-        } else {
-            departmentService.updateDepartment(departmentDto.getId(), departmentDto);
-        }
-        
-        return "redirect:/admin/departments";
-    }
-    @DeleteMapping("/delete/{id}")
+
+    @GetMapping("/delete/{id}")
     public String deleteDepartment(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             departmentService.deleteDepartment(id);
@@ -94,7 +78,7 @@ public class DepartmentController {
 
        model.addAttribute("department", department);
        model.addAttribute("doctors", activeDoctors);
-       return "department/department-doctors";
+       return "hospital/department-doctors";
     }
 
 }

@@ -65,7 +65,7 @@ public class AppointmentTestController {
 
         String view = appointmentController.viewAppointments(model);
 
-        assertEquals("hospital/view-appointments", view);
+        assertEquals("appointment/view-appointments", view);
         assertEquals(list, model.getAttribute("appointments"));
     }
     /**
@@ -77,7 +77,7 @@ public class AppointmentTestController {
 
         String view = appointmentController.viewAppointments(model);
 
-        assertEquals("hospital/view-appointments", view);
+        assertEquals("appointment/view-appointments", view);
         List<AppointmentDTO> appointments = (List<AppointmentDTO>) model.getAttribute("appointments");
         assertTrue(appointments.isEmpty(), "The appointment list should be empty but initialized.");
     }
@@ -99,7 +99,7 @@ public class AppointmentTestController {
         String view = appointmentController.showAssignForm(1L, model);
 
         // Assert
-        assertEquals("hospital/assign-doctor", view);
+        assertEquals("doctor/assign-doctor", view);
         List<Doctor> doctorsInModel = (List<Doctor>) model.getAttribute("doctors");
         // Verify only the active doctor made it to the model
         assertThat(doctorsInModel, hasSize(1)); 

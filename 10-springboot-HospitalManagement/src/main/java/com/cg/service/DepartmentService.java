@@ -58,10 +58,6 @@ public class DepartmentService implements IDepartmentService {
         departmentRepository.save(dept);
     }
 
-    
-
-
-
     // Helper: DTO -> Entity
     private Department convertToEntity(DepartmentDTO dto) {
         Department department = new Department();

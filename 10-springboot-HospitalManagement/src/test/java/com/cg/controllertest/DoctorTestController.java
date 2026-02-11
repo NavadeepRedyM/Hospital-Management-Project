@@ -58,7 +58,7 @@ public class DoctorTestController {
     void testDoctorDashboard_ReturnsCorrectView() {
         String viewName = doctorController.doctorDashboard(userDetails, model);
 
-        assertEquals("hospital/doctor-index", viewName);
+        assertEquals("doctor/doctor-index", viewName);
         assertEquals(mockDoctor, model.getAttribute("doctor"));
     }
       
@@ -77,7 +77,7 @@ public class DoctorTestController {
         List<?> records = (List<?>) model.getAttribute("records");
         assertNotNull(records);
         assertEquals(0, records.size());
-        assertEquals("hospital/doctor-records", viewName);
+        assertEquals("doctor/doctor-records", viewName);
     }    
 
     @Test
@@ -88,7 +88,7 @@ public class DoctorTestController {
 
         String viewName = doctorController.patientRecords(userDetails, search, model);
 
-        assertEquals("hospital/doctor-records", viewName);
+        assertEquals("doctor/doctor-records", viewName);
         assertEquals(records, model.getAttribute("records"));
         assertEquals(search, model.getAttribute("searchKeyword"));
     }
