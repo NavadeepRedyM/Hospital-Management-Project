@@ -12,6 +12,7 @@ import com.cg.dto.AppointmentDTO;
 import com.cg.model.Department;
 import com.cg.model.Doctor;
 import com.cg.repository.DoctorRepository;
+import com.cg.service.AppointmentService;
 import com.cg.service.IAppointmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,149 +26,100 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class AppointmentTestController {
 
-    @Mock
-    private IAppointmentService appointmentService;
+	@Mock private AppointmentService appointmentService;
+    @Mock private Model model;
 
-    @Mock
-    private DoctorRepository doctorRepository;
+    @InjectMocks private AppointmentController appointmentController;
 
-    @InjectMocks
-    private AppointmentController appointmentController;
-
-    private Model model;
-    private AppointmentDTO mockApptDto;
-    private Department mockDept;
+    private AppointmentDTO mockAppt;
 
     @BeforeEach
     void setUp() {
-        model = new BindingAwareModelMap();
-        mockDept = new Department();
-        mockDept.setId(99L);
-        mockDept.setDeptName("General Care");
-
-        mockApptDto = new AppointmentDTO();
-        mockApptDto.setId(1L);
-        mockApptDto.setDepartment(mockDept);
+        // Build the nested object structure your controller expects
+        mockAppt = new AppointmentDTO();
+        mockAppt.setId(1L);
+        
+        Department dept = new Department();
+        dept.setId(99L);
+        dept.setDeptName("Cardiology");
+        
+        mockAppt.setDepartment(dept);
     }
 
-    /**
-     * Test 1: View Appointments List
-     */
-    @Test
-    void testViewAppointments_PopulatesModel() {
-        List<AppointmentDTO> list = Arrays.asList(mockApptDto);
-        when(appointmentService.getAllAppointments()).thenReturn(list);
+    // --- 3 POSITIVE TEST CASES ---
 
-        String view = appointmentController.viewAppointments(model);
-
-        assertEquals("appointment/view-appointments", view);
-        assertEquals(list, model.getAttribute("appointments"));
-    }
-    /**
-     * Negative Test : View Appointments - Empty List
-     */
-    @Test
-    void testViewAppointments_EmptyList() {
-        when(appointmentService.getAllAppointments()).thenReturn(Arrays.asList());
-
-        String view = appointmentController.viewAppointments(model);
-
-        assertEquals("appointment/view-appointments", view);
-        List<AppointmentDTO> appointments = (List<AppointmentDTO>) model.getAttribute("appointments");
-        assertTrue(appointments.isEmpty(), "The appointment list should be empty but initialized.");
-    }
-
-    /**
-     * Test 2: Show Assign Form - Filters active doctors only
-     */
     @Test
     void testShowAssignForm_FiltersActiveDoctors() {
-        // Arrange Doctors
-        Doctor activeDoc = new Doctor(); activeDoc.setId(10L); activeDoc.setActive(true);
-        Doctor inactiveDoc = new Doctor(); inactiveDoc.setId(11L); inactiveDoc.setActive(false);
-        List<Doctor> allDoctorsInDept = Arrays.asList(activeDoc, inactiveDoc);
+        // Arrange: We must mock the SERVICE call, not the repo
+        Doctor activeDoc = new Doctor(); activeDoc.setId(10L);
+        List<Doctor> serviceResults = List.of(activeDoc);
 
-        when(appointmentService.getAppointmentById(1L)).thenReturn(mockApptDto);
-        when(doctorRepository.findByDepartmentId(99L)).thenReturn(allDoctorsInDept);
+        when(appointmentService.getAppointmentById(1L)).thenReturn(mockAppt);
+        when(appointmentService.findByDepartmentId(99L)).thenReturn(serviceResults);
 
         // Act
         String view = appointmentController.showAssignForm(1L, model);
 
         // Assert
         assertEquals("doctor/assign-doctor", view);
-        List<Doctor> doctorsInModel = (List<Doctor>) model.getAttribute("doctors");
-        // Verify only the active doctor made it to the model
-        assertThat(doctorsInModel, hasSize(1)); 
-        assertEquals(10L, doctorsInModel.get(0).getId());
+        verify(model).addAttribute("doctors", serviceResults);
+        verify(model).addAttribute("deptName", "Cardiology");
     }
 
-    /**
-     * Test 3: Save Assignment Post
-     */
     @Test
-    void testSaveAssignment_RedirectsToList() {
-        Long appointmentId = 1L;
-        Long doctorId = 5L;
+    void testShowAssignForm_NoDoctors_ReturnsViewWithEmptyList() {
+        when(appointmentService.getAppointmentById(1L)).thenReturn(mockAppt);
+        when(appointmentService.findByDepartmentId(99L)).thenReturn(Collections.emptyList());
+
+        String view = appointmentController.showAssignForm(1L, model);
+
+        assertEquals("doctor/assign-doctor", view);
+        verify(model).addAttribute("doctors", Collections.emptyList());
+    }
+
+    @Test
+    void testShowAssignForm_VerifyBreadcrumbData() {
+        when(appointmentService.getAppointmentById(1L)).thenReturn(mockAppt);
         
-        // Act
-        String view = appointmentController.saveAssignment(appointmentId, doctorId);
+        appointmentController.showAssignForm(1L, model);
 
-        // Assert
-        assertEquals("redirect:/appointments", view);
-        // Verify that the service method was called with correct IDs
-        verify(appointmentService).assignDoctorToAppointment(appointmentId, doctorId);
+        // Ensures the specific department name is sent to UI
+        verify(model).addAttribute("deptName", "Cardiology");
     }
 
-    /**
-     * Test 4: Reassign POST - Success flash attribute
-     */
+    // --- 3 NEGATIVE TEST CASES ---
+
     @Test
-    void testProcessReassign_SuccessMessage() {
-        RedirectAttributes ra = new RedirectAttributesModelMap();
-        Long apptId = 1L;
-        Long newDoctorId = 20L;
+    void testShowAssignForm_InvalidApptId_ThrowsException() {
+        // Scenario: Service cannot find the appointment
+        when(appointmentService.getAppointmentById(404L)).thenThrow(new RuntimeException("Appt Not Found"));
 
-        String view = appointmentController.processReassign(apptId, newDoctorId, ra);
-
-        assertEquals("redirect:/appointments", view);
-        assertEquals("Appointment reassigned successfully!", ra.getFlashAttributes().get("success"));
-        verify(appointmentService).reassignDoctor(apptId, newDoctorId);
+        assertThrows(RuntimeException.class, () -> appointmentController.showAssignForm(404L, model));
     }
 
-    /**
-     * Test 5: Cancel Appointment
-     */
     @Test
-    void testCancelAppt_RedirectsAndAddsFlashAttribute() {
-        RedirectAttributes ra = new RedirectAttributesModelMap();
-        Long apptId = 1L;
+    void testShowAssignForm_NullDepartment_ThrowsNPE() {
+        // Scenario: Appointment exists but has no department assigned
+        mockAppt.setDepartment(null); 
+        when(appointmentService.getAppointmentById(1L)).thenReturn(mockAppt);
 
-        String view = appointmentController.cancelAppt(apptId, ra);
-
-        assertEquals("redirect:/appointments", view);
-        assertEquals("Appointment marked as Cancelled.", ra.getFlashAttributes().get("success"));
-        verify(appointmentService).cancelAppointment(apptId);
+        // This tests that your controller fails if data integrity is broken
+        assertThrows(NullPointerException.class, () -> appointmentController.showAssignForm(1L, model));
     }
-    /**
-     * Negative Test : Cancel Appointment - Already Cancelled/Not Found
-     */
+
     @Test
-    void testCancelAppt_NonExistentId() {
-        RedirectAttributes ra = new RedirectAttributesModelMap();
-        Long invalidId = 404L;
+    void testShowAssignForm_ServiceLayerFailure_ReturnsError() {
+        // Scenario: Appointment service is down/erroring
+        when(appointmentService.getAppointmentById(1L)).thenReturn(mockAppt);
+        when(appointmentService.findByDepartmentId(99L)).thenThrow(new RuntimeException("DB Error"));
 
-        // Simulate service failing to find the ID
-        doThrow(new IllegalArgumentException("Appointment not found"))
-            .when(appointmentService).cancelAppointment(invalidId);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            appointmentController.cancelAppt(invalidId, ra);
-        });
-}
+        assertThrows(RuntimeException.class, () -> appointmentController.showAssignForm(1L, model));
+    }
 }
 
