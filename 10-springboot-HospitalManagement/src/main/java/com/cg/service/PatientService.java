@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cg.dto.PatientDTO;
+import com.cg.exception.PatientNotFoundException;
 import com.cg.model.Patient;
 import com.cg.repository.PatientRepository;
 
@@ -30,7 +31,7 @@ public class PatientService implements IPatientService {
     public PatientDTO findById(Long id) {
         return patientRepository.findById(id)
                 .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found with id: " + id));
     }
 
     @Override
@@ -40,7 +41,7 @@ public class PatientService implements IPatientService {
         // 1. If ID exists, we are EDITING an existing complete record
         if (patientDto.getId() != null) {
             patient = patientRepository.findById(patientDto.getId())
-                    .orElseThrow(() -> new RuntimeException("Patient not found with id: " + patientDto.getId()));
+                    .orElseThrow(() -> new PatientNotFoundException("Patient not found with id: " + patientDto.getId()));
         } 
         // 2. If ID is null, we are COMPLETING a placeholder record via the Add form
         else {

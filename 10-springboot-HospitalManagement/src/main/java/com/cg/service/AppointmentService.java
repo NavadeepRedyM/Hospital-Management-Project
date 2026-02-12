@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.cg.dto.AppointmentDTO;
 import com.cg.dto.PaymentDTO;
+import com.cg.exception.AppointmentNotFoundException;
+import com.cg.exception.DepartmentNotFoundException;
+import com.cg.exception.DoctorNotFoundException;
+import com.cg.exception.PatientNotFoundException;
 import com.cg.model.Appointment;
 import com.cg.model.Billing;
 import com.cg.model.Department;
@@ -57,7 +61,7 @@ public class AppointmentService implements IAppointmentService {
     public AppointmentDTO getAppointmentById(Long id) {
         return appointmentRepository.findById(id)
                 .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id: " + id));
     }
 
     @Override
@@ -65,7 +69,7 @@ public class AppointmentService implements IAppointmentService {
         // Professional systems rarely delete appointments. 
         // If you MUST keep it, add a check:
         Appointment appt = appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found"));
                 
         if ("CONFIRMED".equals(appt.getStatus())) {
             throw new IllegalStateException("Cannot delete a confirmed appointment. Please cancel it instead.");
@@ -76,14 +80,14 @@ public class AppointmentService implements IAppointmentService {
     @Override
     public AppointmentDTO book(String username, Long departmentId, Long doctorId, LocalDate date, String time, String reason) {
         Patient patient = patientRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found"));
 
         Appointment appointment = new Appointment();
         appointment.setPatient(patient);
         
         // ✅ SAVE THE DEPARTMENT (Crucial for Admin filtering)
         Department dept = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new DepartmentNotFoundException("Department not found"));
         appointment.setDepartment(dept); 
 
         appointment.setAppointmentDate(date);
@@ -129,11 +133,11 @@ public class AppointmentService implements IAppointmentService {
     public void assignDoctorToAppointment(Long appointmentId, Long doctorId) {
         // 1. Find the appointment
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found: " + appointmentId));
 
         // 2. Find the doctor
         Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found: " + doctorId));
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found: " + doctorId));
 
         // 3. Perform Allotment
         appointment.setDoctor(doctor);
@@ -148,7 +152,7 @@ public class AppointmentService implements IAppointmentService {
     public void finalizeBookingWithPayment(PaymentDTO paymentDto) {
         // 1. Fetch the Appointment
         Appointment appointment = appointmentRepository.findById(paymentDto.getAppointmentId())
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found"));
 
         // 2. Create and save the Payment record
         Payment payment = new Payment();
@@ -181,7 +185,7 @@ public class AppointmentService implements IAppointmentService {
     @Transactional
     public void reassignDoctor(Long appointmentId, Long newDoctorId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found"));
 
         Doctor newDoctor = doctorRepository.findById(newDoctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
@@ -199,7 +203,7 @@ public class AppointmentService implements IAppointmentService {
     @Transactional
     public void cancelAppointment(Long id) {
         Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found"));
         
         appointment.setStatus("CANCELLED");
         appointmentRepository.save(appointment);

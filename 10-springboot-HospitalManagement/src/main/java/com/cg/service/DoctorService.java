@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cg.dto.DoctorDTO;
+import com.cg.exception.DoctorNotFoundException;
 import com.cg.model.Doctor;
 import com.cg.model.MedicalRecord;
 import com.cg.repository.DoctorRepository;
@@ -44,7 +45,7 @@ public class DoctorService implements IDoctorService {
         if (doctorDTO.getId() != null) {
             // UPDATE MODE
             doctor = doctorRepository.findById(doctorDTO.getId())
-                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                    .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
             
             doctor.setName(doctorDTO.getName());
             doctor.setQualification(doctorDTO.getQualification());
@@ -116,7 +117,7 @@ public class DoctorService implements IDoctorService {
     @Transactional
     public void deleteDoctor(Long id) {
         Doctor doctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found"));
 
         // 1. Check for ACTIVE appointments
         boolean hasActiveAppointments = doctor.getAppointments().stream()

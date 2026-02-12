@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cg.dto.DepartmentDTO;
+import com.cg.exception.DepartmentNotFoundException;
 import com.cg.model.Department;
 import com.cg.model.Doctor;
 import com.cg.repository.AppointmentRepository;
@@ -35,13 +36,13 @@ public class DepartmentService implements IDepartmentService {
     public DepartmentDTO getDepartmentById(Long id) {
         return departmentRepository.findById(id)
                 .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new DepartmentNotFoundException("Department not found"));
     }
     @Override
     @Transactional
     public void deleteDepartment(Long id) {
         Department dept = departmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new DepartmentNotFoundException("Department not found"));
 
         // 1. Safety Check: Still block if there are ACTIVE doctors
         boolean hasActiveDoctors = dept.getDoctors().stream()
@@ -93,7 +94,7 @@ public class DepartmentService implements IDepartmentService {
     @Override
     public DepartmentDTO updateDepartment(Long id, DepartmentDTO dto) {
         Department existing = departmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Department not found with id: " + id));
+                .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id: " + id));
         
         existing.setDeptName(dto.getDeptName());
         existing.setHodName(dto.getHodName());

@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     // 1. Handle Resource Not Found (404)
     @ExceptionHandler(ResourceNotFoundException.class)
     public String handleResourceNotFound(ResourceNotFoundException ex, Model model) {
-        logger.error("Resource not found: {}", ex.getMessage());
+       // logger.error("Resource not found: {}", ex.getMessage());
         
         // Match the HTML: ${error.message} and ${error.details}
         model.addAttribute("error", Map.of(
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     // 3. Handle Generic Runtime Errors (500)
     @ExceptionHandler(RuntimeException.class)
     public String handleRuntimeException(RuntimeException ex, Model model) {
-        logger.error("Internal Error: ", ex);
+       // logger.error("Internal Error: ", ex);
         model.addAttribute("error", Map.of(
             "message", "500 - Internal Server Error",
             "details", "Something went wrong on our end. " + ex.getMessage()
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNoResourceFound(NoResourceFoundException ex, Model model) {
-        logger.error("404 Error: Resource not found - {}", ex.getMessage());
+        //logger.error("404 Error: Resource not found - {}", ex.getMessage());
         
         // Map attributes to match your HTML: ${error.message} and ${error.details}
         model.addAttribute("error", Map.of(

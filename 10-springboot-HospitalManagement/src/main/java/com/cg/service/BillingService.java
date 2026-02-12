@@ -1,6 +1,7 @@
 package com.cg.service;
 
 import com.cg.dto.BillingDTO;
+import com.cg.exception.AppointmentNotFoundException;
 import com.cg.model.Appointment;
 import com.cg.model.Billing;
 import com.cg.repository.AppointmentRepository;
@@ -25,7 +26,7 @@ public class BillingService {
     @Transactional
     public BillingDTO createBilling(BillingDTO dto) {
         Appointment app = appointmentRepository.findById(dto.getAppointmentId())
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found"));
 
         Billing billing = new Billing();
         billing.setAppointment(app);

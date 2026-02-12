@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cg.dto.MedicalRecordDTO;
+import com.cg.exception.AppointmentNotFoundException;
+import com.cg.exception.DoctorNotFoundException;
+import com.cg.exception.MedicalRecordNotFoundException;
+import com.cg.exception.PatientNotFoundException;
 import com.cg.model.Appointment;
 import com.cg.model.Doctor;
 import com.cg.model.MedicalRecord;
@@ -40,14 +44,14 @@ public class MedicalRecordService implements IMedicalRecord {
         
         // Use .orElseThrow for cleaner "fail-fast" logic
         Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new RuntimeException("Patient not found: " + patientId));
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found: " + patientId));
         Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found: " + doctorId));
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found: " + doctorId));
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found: " + appointmentId));
 
         if (medicalRecordRepository.findByAppointmentId(appointmentId).isPresent()) {
-            throw new RuntimeException("Medical record already exists for this appointment");
+            throw new MedicalRecordNotFoundException("Medical record already exists for this appointment");
         }
 
         MedicalRecord record = new MedicalRecord();
@@ -67,7 +71,7 @@ public class MedicalRecordService implements IMedicalRecord {
     public MedicalRecordDTO getMedicalRecordById(Long id) {
         return medicalRecordRepository.findById(id)
                 .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Medical record not found for ID: " + id));
+                .orElseThrow(() -> new MedicalRecordNotFoundException("Medical record not found for ID: " + id));
     }
 
     @Override
@@ -87,7 +91,7 @@ public class MedicalRecordService implements IMedicalRecord {
     @Override
     public MedicalRecordDTO updateMedicalRecord(Long id, String symptoms, String diagnosis, String treatmentPlan) {
         MedicalRecord record = medicalRecordRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cannot update: Record not found for ID: " + id));
+                .orElseThrow(() -> new MedicalRecordNotFoundException("Cannot update: Record not found for ID: " + id));
         
         record.setSymptoms(symptoms);
         record.setDiagnosis(diagnosis);
