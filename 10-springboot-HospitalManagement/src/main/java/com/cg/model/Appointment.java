@@ -14,132 +14,153 @@ import jakarta.persistence.OneToOne;
 
 @Entity
 
-	public class Appointment {
-	 
-	    @Id
+public class Appointment {
 
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
 
-	    private Long id;
-	 
-	    @ManyToOne
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 
-	    @JoinColumn(name = "patient_id")
+	private Long id;
 
-	    private Patient patient; // Assuming a Patient entity exists
-	 
-	    @ManyToOne
+	@ManyToOne
 
-	    @JoinColumn(name = "doctor_id")
+	@JoinColumn(name = "patient_id")
 
-	    private Doctor doctor; // Assuming a Doctor entity exists
-	 
-	    private LocalDate appointmentDate;
+	private Patient patient; // Assuming a Patient entity exists
 
-	    private String timeSlot;
+	@ManyToOne
 
-	    private String status;
+	@JoinColumn(name = "doctor_id")
 
-	    private String reasonForVisit;
-	 
-	    @OneToOne(mappedBy = "appointment")
+	private Doctor doctor; // Assuming a Doctor entity exists
 
-	    private Billing billing; // Assuming a Billing entity exists
-	 
-	    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
-	    private MedicalRecord medicalRecord; // Assuming a MedicalRecord entity exists
-	    
-	    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
-	    private Payment payment;
-	 
-	    // Standard getters and setters
-	    
-	    
-	    @ManyToOne
-	    @JoinColumn(name = "department_id")
-	    private Department department; // This stores the patient's choice
+	private LocalDate appointmentDate;
 
+	private String timeSlot;
 
-	    public Long getId() { 
+	private String status;
 
-	    	return id; }
+	private String reasonForVisit;
 
-	    public void setId(Long id) { 
+	@OneToOne(mappedBy = "appointment")
 
-	    	this.id = id; }
+	private Billing billing; // Assuming a Billing entity exists
 
-	    public Patient getPatient() { 
+	@OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
+	private MedicalRecord medicalRecord; // Assuming a MedicalRecord entity exists
 
-	    	return patient; }
+	@OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Payment payment;
 
-	    public void setPatient(Patient patient) { 
+	// Standard getters and setters
 
-	    	this.patient = patient; }
+	@ManyToOne
+	@JoinColumn(name = "department_id")
+	private Department department; // This stores the patient's choice
 
-	    public Doctor getDoctor() { 
+	public Long getId() {
 
-	    	return doctor; }
-
-	    public void setDoctor(Doctor doctor) { 
-
-	    	this.doctor = doctor; }
-
-	    public LocalDate getAppointmentDate() { 
-
-	    	return appointmentDate; }
-
-	    public void setAppointmentDate(LocalDate date) {
-
-	    	this.appointmentDate = date; }
-
-	    public String getTimeSlot() { 
-
-	    	return timeSlot; }
-
-	    public void setTimeSlot(String timeSlot) {
-
-	    	this.timeSlot = timeSlot; }
-
-	    public String getStatus() { 
-
-	    	return status; }
-
-	    public void setStatus(String status) { 
-
-	    	this.status = status; }
-
-	    public String getReasonForVisit() { 
-
-	    	return reasonForVisit; }
-
-	    public void setReasonForVisit(String reasonForVisit) {
-
-	    	this.reasonForVisit = reasonForVisit; }
-
-	    public Billing getBilling() { 
-
-	    	return billing; }
-
-	    public void setBilling(Billing billing) {
-
-	    	this.billing = billing; }
-
-	    public MedicalRecord getMedicalRecord() {
-
-	    	return medicalRecord; }
-
-	    public void setMedicalRecord(MedicalRecord medicalRecord) { this.medicalRecord = medicalRecord; }
-
-		public Department getDepartment() {
-			return department;
-		}
-
-		public void setDepartment(Department department) {
-			this.department = department;
-		}
-		public Payment getPayment() { return payment; }
-		public void setPayment(Payment payment) { this.payment = payment; }
-	    
+		return id;
 	}
 
-	 
+	public void setId(Long id) {
+
+		this.id = id;
+	}
+
+	public Patient getPatient() {
+
+		return patient;
+	}
+
+	public void setPatient(Patient patient) {
+
+		this.patient = patient;
+	}
+
+	public Doctor getDoctor() {
+
+		return doctor;
+	}
+
+	public void setDoctor(Doctor doctor) {
+
+		this.doctor = doctor;
+	}
+
+	public LocalDate getAppointmentDate() {
+
+		return appointmentDate;
+	}
+
+	public void setAppointmentDate(LocalDate date) {
+
+		this.appointmentDate = date;
+	}
+
+	public String getTimeSlot() {
+
+		return timeSlot;
+	}
+
+	public void setTimeSlot(String timeSlot) {
+
+		this.timeSlot = timeSlot;
+	}
+
+	public String getStatus() {
+
+		return status;
+	}
+
+	public void setStatus(String status) {
+
+		this.status = status;
+	}
+
+	public String getReasonForVisit() {
+
+		return reasonForVisit;
+	}
+
+	public void setReasonForVisit(String reasonForVisit) {
+
+		this.reasonForVisit = reasonForVisit;
+	}
+
+	public Billing getBilling() {
+
+		return billing;
+	}
+
+	public void setBilling(Billing billing) {
+
+		this.billing = billing;
+	}
+
+	public MedicalRecord getMedicalRecord() {
+
+		return medicalRecord;
+	}
+
+	public void setMedicalRecord(MedicalRecord medicalRecord) {
+		this.medicalRecord = medicalRecord;
+	}
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
+
+}

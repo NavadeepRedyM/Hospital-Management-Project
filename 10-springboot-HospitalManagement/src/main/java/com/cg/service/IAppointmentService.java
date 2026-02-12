@@ -3,6 +3,7 @@ package com.cg.service;
 import com.cg.dto.AppointmentDTO;
 import com.cg.dto.PaymentDTO;
 import com.cg.model.Billing;
+import com.cg.model.Doctor;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,6 +21,6 @@ public interface IAppointmentService {
 	List<Billing> getBillsByPatientId(Long id);
 	void reassignDoctor(Long appointmentId, Long newDoctorId);
 	void cancelAppointment(Long id);
-
+	 public List<Doctor> findByDepartmentId(Long deptId);
 	
 }

@@ -21,8 +21,7 @@ public class AdminPatientController {
     @Autowired	
     private PatientService patientService;
     
-    @Autowired
-    private UserService userService;
+  
 
     @GetMapping
     public String list(@RequestParam(value = "q", required = false) String q, Model model) {

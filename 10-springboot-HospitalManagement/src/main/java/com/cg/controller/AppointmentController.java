@@ -25,8 +25,6 @@ public class AppointmentController {
     @Autowired
     private IAppointmentService appointmentService;
     
-    @Autowired
-    private DoctorRepository doctorRepository;
  
     // ONLY VIEW LIST
     @GetMapping
@@ -51,10 +49,7 @@ public class AppointmentController {
         Long deptId = appointment.getDepartment().getId();
         
         // ✅ Filter to only include active doctors
-        List<Doctor> activeDoctors = doctorRepository.findByDepartmentId(deptId)
-                .stream()
-                .filter(Doctor::isActive)
-                .toList();
+        List<Doctor> activeDoctors = appointmentService.findByDepartmentId(deptId);
         
         model.addAttribute("appointment", appointment);
         model.addAttribute("deptName", appointment.getDepartment().getDeptName());
@@ -67,10 +62,7 @@ public class AppointmentController {
         Long deptId = appointment.getDepartment().getId();
         
         // ✅ Filter to only include active doctors for reassignment
-        List<Doctor> sameDeptActiveDoctors = doctorRepository.findByDepartmentId(deptId)
-                .stream()
-                .filter(Doctor::isActive)
-                .toList();
+        List<Doctor> sameDeptActiveDoctors = appointmentService.findByDepartmentId(deptId);
         
         model.addAttribute("appointment", appointment);
         model.addAttribute("deptName", appointment.getDepartment().getDeptName());

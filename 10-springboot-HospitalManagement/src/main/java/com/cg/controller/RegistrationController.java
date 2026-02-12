@@ -12,6 +12,7 @@ import com.cg.model.User;
 import com.cg.model.Patient;
 import com.cg.repository.PatientRepository;
 import com.cg.service.DoctorService;
+import com.cg.service.RegistractionService;
 import com.cg.service.UserService;
 
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class RegistrationController {
     private DoctorService doctorService;
     
     @Autowired
-    private PatientRepository patientRepository;
+    private RegistractionService registrationService;
 
     // 1. PATIENT REGISTRATION (Self-Service)
     @GetMapping("/register-user")
@@ -56,7 +57,7 @@ public class RegistrationController {
         Patient placeholder = new Patient();
         placeholder.setUsername(user.getUsername());
         placeholder.setName("PENDING_DETAILS"); 
-        patientRepository.save(placeholder);
+        registrationService.savePatient(placeholder);
         
         return "redirect:/login?success";
     }

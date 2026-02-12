@@ -9,12 +9,12 @@ import java.util.List;
 @Repository
 public interface BillingRepository extends JpaRepository<Billing, Long> {
  
-    // 🔹 Find all bills of a particular patient
+    //  Find all bills of a particular patient
     List<Billing> findByPatientId(Long patientId);
  
-    // 🔹 Find bill by appointment id
+    //  Find bill by appointment id
     Billing findByAppointmentId(Long appointmentId);
  
-    // 🔹 Find bills by payment status (PAID / UNPAID)
+    //  Find bills by payment status (PAID / UNPAID)
     List<Billing> findByPaymentStatus(String paymentStatus);
 }

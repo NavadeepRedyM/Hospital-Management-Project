@@ -209,6 +209,12 @@ public class AppointmentService implements IAppointmentService {
         appointmentRepository.save(appointment);
     }
     
+    public List<Doctor> findByDepartmentId(Long deptId){
+    	return doctorRepository.findByDepartmentId(deptId)
+                .stream()
+                .filter(Doctor::isActive)
+                .toList();
+    }
 
 
 }
